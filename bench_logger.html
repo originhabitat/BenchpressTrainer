@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bench Press Logger</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-muted: #6b6b68;
+    --ink-faint: #a8a8a3;
+    --paper: #f5f3ec;
+    --paper-2: #ebe8df;
+    --paper-3: #ddd9cd;
+    --accent: #b8460e;
+    --accent-soft: #f0d8c8;
+    --good: #2d5e3e;
+    --good-soft: #d4e3da;
+    --warn: #8a6a13;
+    --warn-soft: #ede0bf;
+    --danger: #8a2a2a;
+    --rule: #c8c4b6;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'URW Palladio L', 'Book Antiqua', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 16px 14px 80px; }
+
+  /* HEADER */
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 18px; }
+  .masthead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .title-block h1 {
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.02em;
+  }
+  .title-block .sub {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--ink-muted); margin-top: 4px;
+  }
+  .meta-block { font-size: 12px; color: var(--ink-muted); text-align: right; }
+  .meta-block strong { color: var(--ink); font-weight: 600; }
+
+  /* TABS */
+  nav.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--rule); margin-bottom: 18px; overflow-x: auto; }
+  nav.tabs button {
+    background: none; border: none; padding: 10px 14px;
+    font-family: inherit; font-size: 13px; color: var(--ink-muted);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    white-space: nowrap; letter-spacing: 0.02em;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  /* SECTIONS */
+  section.card {
+    background: #fdfcf7;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  section.card h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--ink-muted); margin: 0 0 10px; font-weight: 700;
+    border-bottom: 1px solid var(--paper-3); padding-bottom: 6px;
+  }
+  section.card h3 {
+    font-size: 16px; margin: 12px 0 8px; font-weight: 600;
+  }
+  .hint { font-size: 12px; color: var(--ink-muted); font-style: italic; margin: 4px 0 8px; }
+
+  /* FORM ELEMENTS */
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-muted);
+          text-transform: uppercase; letter-spacing: 0.08em; margin: 8px 0 4px; }
+  input[type="text"], input[type="number"], input[type="date"], textarea, select {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--accent); background: #fff;
+  }
+  textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+  /* INLINE INPUT GROUPS */
+  .row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 0; }
+  .row .narrow { flex: 0 0 90px; }
+  .row .micro { flex: 0 0 70px; }
+
+  /* BUTTONS */
+  button.btn {
+    background: var(--ink); color: var(--paper);
+    border: none; padding: 10px 16px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    border-radius: 2px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  button.btn:hover { background: #000; }
+  button.btn.ghost {
+    background: transparent; color: var(--ink); border: 1px solid var(--ink);
+  }
+  button.btn.ghost:hover { background: var(--ink); color: var(--paper); }
+  button.btn.accent { background: var(--accent); }
+  button.btn.accent:hover { background: #9c3a09; }
+  button.btn.danger { background: var(--danger); }
+  button.btn.small { padding: 6px 10px; font-size: 11px; }
+  button.icon-btn {
+    background: none; border: 1px solid var(--rule); width: 28px; height: 28px;
+    border-radius: 2px; cursor: pointer; color: var(--ink-muted);
+    font-size: 14px; line-height: 1; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  button.icon-btn:hover { background: var(--paper-2); color: var(--ink); }
+
+  /* CHECKBOXES & RADIOS */
+  .check-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 6px 0; }
+  .check-row label {
+    display: inline-flex; align-items: center; gap: 6px;
+    text-transform: none; letter-spacing: 0; font-weight: 400;
+    font-size: 14px; color: var(--ink); margin: 0; cursor: pointer;
+  }
+  .check-row input[type="checkbox"], .check-row input[type="radio"] { margin: 0; }
+
+  /* EXERCISE BLOCKS */
+  .exercise-block {
+    border: 1px solid var(--paper-3);
+    border-radius: 3px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--paper);
+  }
+  .exercise-block.has-data { background: #fdfcf7; border-color: var(--rule); }
+  .ex-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 8px; margin-bottom: 8px;
+  }
+  .ex-name { font-weight: 600; font-size: 15px; }
+  .ex-target {
+    font-size: 12px; color: var(--ink-muted); font-style: italic;
+    flex: 1; text-align: right;
+  }
+
+  /* SETS TABLE */
+  table.sets {
+    width: 100%; border-collapse: collapse; margin: 6px 0;
+    font-size: 14px;
+  }
+  table.sets th {
+    text-align: left; font-size: 10px; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 600; letter-spacing: 0.1em;
+    padding: 4px 6px; border-bottom: 1px solid var(--rule);
+  }
+  table.sets td { padding: 3px 4px; }
+  table.sets td input {
+    padding: 6px 8px; font-size: 14px;
+  }
+  table.sets td.set-num {
+    color: var(--ink-muted); font-size: 12px; font-weight: 600;
+    width: 26px; text-align: center;
+  }
+
+  /* MATRIX TABLE */
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.matrix th, table.matrix td {
+    padding: 6px 8px; text-align: left;
+    border-bottom: 1px solid var(--paper-3);
+  }
+  table.matrix th {
+    background: var(--paper-2); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--ink-muted);
+  }
+  table.matrix tr.current { background: var(--accent-soft); }
+  table.matrix tr.current td { font-weight: 600; }
+
+  /* WEIGHT LOG */
+  .weight-log-entry {
+    display: flex; gap: 10px; align-items: center; padding: 6px 0;
+    border-bottom: 1px solid var(--paper-3);
+    font-size: 14px;
+  }
+  .weight-log-entry .week { font-size: 11px; color: var(--ink-muted); width: 60px; }
+  .weight-log-entry .date { font-size: 12px; color: var(--ink-muted); width: 80px; }
+  .weight-log-entry .kg { font-weight: 600; width: 70px; }
+  .weight-log-entry .delta { font-size: 12px; font-style: italic; }
+  .delta.up { color: var(--good); }
+  .delta.down { color: var(--danger); }
+  .delta.flat { color: var(--ink-muted); }
+
+  /* OUTPUT */
+  .output-area {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 12px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    max-height: 50vh;
+    overflow: auto;
+    white-space: pre-wrap;
+    border-radius: 2px;
+    line-height: 1.5;
+  }
+
+  /* PILLS / BADGES */
+  .pill {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 100px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .pill.good { background: var(--good-soft); color: var(--good); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.accent { background: var(--accent-soft); color: var(--accent); }
+
+  .toolbar {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  /* HISTORY LIST */
+  .history-item {
+    background: var(--paper);
+    border: 1px solid var(--paper-3);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: 2px;
+    font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .history-item .date { font-size: 12px; color: var(--ink-muted); }
+  .history-item .focus { font-weight: 600; }
+
+  .empty-state {
+    text-align: center; padding: 30px 16px;
+    color: var(--ink-muted); font-style: italic; font-size: 14px;
+  }
+
+  .file-input-wrapper {
+    border: 2px dashed var(--rule); padding: 16px;
+    text-align: center; border-radius: 3px;
+    background: var(--paper);
+  }
+  .file-input-wrapper.drag-over { border-color: var(--accent); background: var(--accent-soft); }
+  .file-input-wrapper input[type="file"] { display: none; }
+
+  details summary {
+    cursor: pointer; font-size: 12px; color: var(--ink-muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 6px 0; font-weight: 600;
+  }
+  details[open] summary { color: var(--ink); }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--paper);
+    padding: 10px 18px; border-radius: 2px;
+    font-size: 14px; z-index: 100;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* MOBILE TWEAKS */
+  @media (max-width: 480px) {
+    .container { padding: 12px 10px 80px; }
+    .title-block h1 { font-size: 22px; }
+    .meta-block { text-align: left; width: 100%; }
+    .row .narrow { flex: 1; }
+    nav.tabs button { padding: 8px 10px; font-size: 12px; }
+    table.sets th, table.sets td { padding: 3px 2px; }
+    table.sets td input { padding: 5px 4px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="masthead">
+      <div class="title-block">
+        <h1>The Bench Press Ledger</h1>
+        <div class="sub">Daily undulating periodization · 16-week base-to-peak protocol</div>
+      </div>
+      <div class="meta-block">
+        <div>Goal: <strong>80 kg 1RM</strong></div>
+        <div id="header-week-meta">Week — / 16</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" id="tabs">
+    <button data-tab="today" class="active">Today's session</button>
+    <button data-tab="weight">Body weight</button>
+    <button data-tab="history">History</button>
+    <button data-tab="matrix">Matrix</button>
+    <button data-tab="coach-import">Coach response</button>
+    <button data-tab="import">Bulk import</button>
+    <button data-tab="export">Export</button>
+    <button data-tab="data">Data</button>
+  </nav>
+
+  <!-- ==================== TAB: TODAY'S SESSION ==================== -->
+  <div class="pane active" id="pane-today">
+
+    <div id="edit-mode-banner" style="display:none; background: var(--accent-soft); border: 1px solid var(--accent); padding: 10px 14px; border-radius: 3px; margin-bottom: 14px; font-size: 14px;">
+      <strong>Editing saved session:</strong> <span id="edit-mode-label"></span>.
+      Changes auto-save. Tap <em>Save session</em> to confirm and return to a blank session, or
+      <button class="btn ghost small" id="edit-mode-exit" style="margin-left: 8px;">Exit edit mode</button>
+    </div>
+
+    <section class="card">
+      <h2>Session setup</h2>
+      <div class="row">
+        <div>
+          <label>Date</label>
+          <input type="date" id="session-date">
+        </div>
+        <div>
+          <label>Day type</label>
+          <select id="session-day">
+            <option value="Monday — Volume">Monday — Volume</option>
+            <option value="Wednesday — Weak Points">Wednesday — Weak Points (paused)</option>
+            <option value="Friday — Heavy">Friday — Heavy</option>
+          </select>
+        </div>
+        <div class="narrow">
+          <label>Week #</label>
+          <input type="number" id="session-week" min="1" max="16" value="4">
+        </div>
+      </div>
+
+      <label style="margin-top:12px;">Pre-session context (check all that apply)</label>
+      <div class="check-row">
+        <label><input type="checkbox" id="ctx-pickleball"> Pickleball today/yesterday</label>
+        <label><input type="checkbox" id="ctx-poor-sleep"> Poor sleep</label>
+        <label><input type="checkbox" id="ctx-rested"> Well rested / day off</label>
+        <label><input type="checkbox" id="ctx-stressed"> Stressed</label>
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <div>
+          <label>Time of day</label>
+          <select id="ctx-time">
+            <option value="">—</option>
+            <option>Morning (pre-work)</option>
+            <option>Afternoon</option>
+            <option>Evening (post-work)</option>
+            <option>Late night</option>
+          </select>
+        </div>
+        <div class="narrow">
+          <label>Energy /10</label>
+          <input type="number" id="ctx-energy" min="1" max="10">
+        </div>
+      </div>
+    </section>
+
+    <!-- COACH CONTEXT (per-session, from Claude's prior reply) -->
+    <section class="card">
+      <h2>Coach context for this session</h2>
+      <p class="hint">When Claude prescribed this session in the prior chat, paste the prescription summary and any open flags here. This is what makes the next export self-aware — Claude sees its own prior reasoning.</p>
+      <label>Prescription summary <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-faint);">(the brief paragraph Claude wrote at the top of this session)</span></label>
+      <textarea id="coach-summary" rows="3" placeholder="e.g. Matrix progression — 1.25kg jump from W3. Set 4 at W3 (9 reps) shows clear headroom; if all 4 sets hit 6+ today with RPE ≤ 8, ready for 15kg next Monday."></textarea>
+      <label>Open flags <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-faint);">(things Claude told you to watch / fix this session)</span></label>
+      <textarea id="coach-flags" rows="2" placeholder="e.g. Complete all 3 sets of Face Pulls (3rd consecutive miss). Match L tempo to R on Incline DB Press."></textarea>
+    </section>
+
+    <!-- EXERCISE BLOCKS -->
+    <section class="card">
+      <h2>Prescribed exercises &amp; sets</h2>
+      <p class="hint">Targets are set when you load the day; sets get filled in during/after the session. Add per-exercise comments as you go.</p>
+      <div id="exercises-container"></div>
+      <button class="btn ghost small" id="reset-exercises">Reload day template</button>
+    </section>
+
+    <!-- SESSION REMARKS -->
+    <section class="card">
+      <h2>Whole-session remarks</h2>
+      <p class="hint">How the session felt overall: energy, mental state, anything that affected performance, anything to flag for the coach.</p>
+      <textarea id="session-remarks" rows="4" placeholder="e.g. First early morning session before work. Energy 7/10. No pickleball today. Bench felt strong..."></textarea>
+    </section>
+
+    <div class="toolbar">
+      <button class="btn accent" id="save-session">Save session</button>
+      <button class="btn ghost" id="clear-session">Clear current</button>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB: BODY WEIGHT ==================== -->
+  <div class="pane" id="pane-weight">
+    <section class="card">
+      <h2>Add weigh-in</h2>
+      <p class="hint">Log every Monday morning before eating. Target: +0.25–0.4 kg/week (lean bulk).</p>
+      <div class="row">
+        <div class="narrow">
+          <label>Week #</label>
+          <input type="number" id="bw-week" min="1" max="16">
+        </div>
+        <div>
+          <label>Date</label>
+          <input type="date" id="bw-date">
+        </div>
+        <div class="narrow">
+          <label>Weight (kg)</label>
+          <input type="number" id="bw-kg" step="0.1" min="40" max="120">
+        </div>
+        <div>
+          <button class="btn" id="bw-add">Add</button>
+        </div>
+      </div>
+      <label style="margin-top:8px;">Note (optional)</label>
+      <input type="text" id="bw-note" placeholder="e.g. post-pickleball weekend, dehydrated">
+    </section>
+
+    <section class="card">
+      <h2>Weight log</h2>
+      <div id="weight-log"></div>
+    </section>
+  </div>
+
+  <!-- ==================== TAB: HISTORY ==================== -->
+  <div class="pane" id="pane-history">
+    <section class="card">
+      <h2>Saved sessions</h2>
+      <p class="hint">Tap a session to view, edit, or delete. The most recent 4 weeks are included in MD exports by default.</p>
+      <div id="history-list"></div>
+    </section>
+  </div>
+
+  <!-- ==================== TAB: MATRIX ==================== -->
+  <div class="pane" id="pane-matrix">
+    <section class="card">
+      <h2>16-week loading matrix</h2>
+      <p class="hint">All weights per side (excluding 20kg bar). Current week highlighted.</p>
+      <div id="matrix-container"></div>
+    </section>
+  </div>
+
+  <!-- ==================== TAB: COACH RESPONSE IMPORT ==================== -->
+  <div class="pane" id="pane-coach-import">
+    <section class="card">
+      <h2>Paste Claude's response → auto-fill next sessions</h2>
+      <p class="hint">After Claude prescribes the next 3 sessions in chat, paste the relevant section here. The parser pulls out per-session prescription summaries, open flags, and per-exercise targets + rationales, then creates upcoming session entries pre-populated for you. Review the preview before committing.</p>
+
+      <label>Week number these prescriptions are for</label>
+      <input type="number" id="coach-target-week" min="1" max="16" value="5" style="max-width:140px;">
+
+      <label style="margin-top: 10px;">Paste the Next-Sessions section of Claude's reply</label>
+      <textarea id="coach-import-text" rows="14" placeholder="Paste from somewhere around 'Next 3 Sessions' or the first Mon/Wed/Fri heading down through the last exercise table. Including the surrounding prose is fine — the parser ignores what it can't structure."></textarea>
+
+      <div class="toolbar" style="margin-top: 10px;">
+        <button class="btn accent" id="coach-parse">Parse preview</button>
+        <button class="btn ghost" id="coach-clear">Clear</button>
+      </div>
+    </section>
+
+    <section class="card" id="coach-preview-card" style="display:none;">
+      <h2>Preview — sessions to create</h2>
+      <p class="hint">Review what was parsed. Edit anything inline below. Untick sessions you don't want to create. Sessions with the same week + day type as an existing entry will <strong>update</strong> that entry rather than duplicate.</p>
+      <div id="coach-preview"></div>
+      <div class="toolbar" style="margin-top: 14px;">
+        <button class="btn accent" id="coach-commit">Save to upcoming sessions</button>
+        <button class="btn ghost" id="coach-cancel">Cancel</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== TAB: BULK IMPORT ==================== -->
+  <div class="pane" id="pane-import">
+    <section class="card">
+      <h2>One-time backfill from existing MD logs</h2>
+      <p class="hint">Paste an existing session log (or several at once) here. The parser is forgiving — it handles <code>12.5kgx6</code>, <code>15x3</code>, <code>13.75 × 7</code> and similar variants. After parsing, review the preview and tap "Save these sessions" to commit.</p>
+
+      <label>Paste your session log MD</label>
+      <textarea id="import-md-text" rows="12" placeholder="Paste anything from #### WEEK headers down to ##### Day Type tables. Multiple weeks/sessions at once is fine."></textarea>
+
+      <div class="toolbar" style="margin-top: 10px;">
+        <button class="btn accent" id="import-parse">Parse preview</button>
+        <button class="btn ghost" id="import-clear">Clear</button>
+      </div>
+    </section>
+
+    <section class="card" id="import-preview-card" style="display:none;">
+      <h2>Preview — sessions detected</h2>
+      <p class="hint">Review what was parsed. Anything missing? Edit values inline below. Sessions you don't want, untick. Then commit.</p>
+      <div id="import-preview"></div>
+      <div class="toolbar" style="margin-top: 14px;">
+        <button class="btn accent" id="import-commit">Save checked sessions</button>
+        <button class="btn ghost" id="import-cancel">Cancel</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== TAB: EXPORT ==================== -->
+  <div class="pane" id="pane-export">
+    <section class="card">
+      <h2>Step 1 — Hevy CSV (optional)</h2>
+      <p class="hint">If you tracked sets in Hevy, drop the export here to enrich the prompt with raw numbers from Apr 2026 onward. Sessions you've saved manually take precedence; CSV fills in any gaps.</p>
+      <div class="file-input-wrapper" id="csv-drop">
+        <p style="margin:0 0 8px;">Drop Hevy CSV here, or</p>
+        <label for="csv-file" style="text-transform:none;letter-spacing:0;font-weight:400;display:inline-block;cursor:pointer;color:var(--accent);text-decoration:underline;font-size:14px;margin:0;">choose a file</label>
+        <input type="file" id="csv-file" accept=".csv">
+        <p id="csv-status" class="hint" style="margin:8px 0 0;"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Step 2 — Your ask for Claude</h2>
+      <p class="hint">What do you want from this session — review last session, prescribe next 3, debug a sticking point, etc.</p>
+      <textarea id="export-ask" rows="3" placeholder="e.g. Review my W4 sessions. Friday Heavy was my first clean Heavy day — how should W5 look across all 3 days?"></textarea>
+
+      <label style="margin-top:12px;">History depth</label>
+      <div class="check-row">
+        <label><input type="radio" name="hist-depth" value="2"> Last 2 weeks</label>
+        <label><input type="radio" name="hist-depth" value="4" checked> Last 4 weeks (recommended)</label>
+        <label><input type="radio" name="hist-depth" value="all"> All since Apr 2026 (verbose)</label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Step 3 — Generate &amp; copy</h2>
+      <div class="toolbar">
+        <button class="btn accent" id="generate-md">Generate prompt</button>
+        <button class="btn ghost" id="copy-md" disabled>Copy to clipboard</button>
+        <button class="btn ghost" id="download-md" disabled>Download .md</button>
+      </div>
+      <div class="output-area" id="md-output">Click "Generate prompt" to build the coaching brief.</div>
+    </section>
+  </div>
+
+  <!-- ==================== TAB: DATA ==================== -->
+  <div class="pane" id="pane-data">
+    <section class="card">
+      <h2>About your data</h2>
+      <p style="font-size: 14px; line-height: 1.6;">
+        Everything you log lives in <strong>this browser only</strong> (using <code>localStorage</code>). No server, no account, no upload.
+      </p>
+      <ul style="font-size: 13px; color: var(--ink-muted); line-height: 1.7; padding-left: 20px;">
+        <li><strong>Persists</strong> across page reloads, browser restarts, and visits to the GitHub Pages URL.</li>
+        <li><strong>Tied to this device + this browser.</strong> Phone Chrome and laptop Chrome are separate stores.</li>
+        <li><strong>Clearing browser data deletes it.</strong> Same goes for "incognito" mode.</li>
+        <li><strong>To use across devices:</strong> export JSON here → AirDrop / email / Drive the file → import on the other device.</li>
+        <li><strong>Saving is automatic</strong> as you type — there is nothing to "upload" when you leave the page.</li>
+      </ul>
+      <p id="last-backup-info" class="hint" style="margin-top: 12px;"></p>
+    </section>
+
+    <section class="card">
+      <h2>Backup &amp; restore</h2>
+      <p class="hint">Export a JSON backup periodically — at minimum after each completed week. The import wipes existing data and replaces it.</p>
+      <div class="toolbar">
+        <button class="btn" id="export-json">Export JSON backup</button>
+        <label for="import-json-file" class="btn ghost" style="cursor:pointer;display:inline-block;">Import JSON backup</label>
+        <input type="file" id="import-json-file" accept=".json" style="display:none;">
+        <button class="btn danger" id="clear-all">Clear all data</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Athlete profile</h2>
+      <p class="hint">Edited values are baked into the MD export.</p>
+      <div class="row">
+        <div class="narrow"><label>Age</label><input type="number" id="prof-age" value="28"></div>
+        <div class="narrow"><label>Height (cm)</label><input type="number" id="prof-height" value="173"></div>
+        <div class="narrow"><label>Goal 1RM (kg)</label><input type="number" id="prof-goal" value="80"></div>
+        <div class="narrow"><label>Timeline (wks)</label><input type="number" id="prof-weeks" value="16"></div>
+      </div>
+      <label style="margin-top:8px;">Standing notes for coach (chronic issues, exercise substitutions, etc.)</label>
+      <textarea id="prof-notes" rows="4">Hardest point in bench is off the chest (Wednesday paused work targets this).
+Left-side lag on Incline DB Press and DB Rows since W1.
+Tricep rope pushdown unstable — rep crashes mid-set; held at lower weight.
+Friday Heavy chronically struggled — protect it.
+Bicep curls switched permanently to seated incline curl.</textarea>
+    </section>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================================
+// STATE & STORAGE
+// ============================================================================
+const STORAGE_KEY = 'benchPressLedger_v1';
+const HEVY_FILTER_DATE = new Date('2026-04-07T00:00:00');
+
+const DEFAULT_STATE = {
+  profile: {
+    age: 28, height: 173, goalKg: 80, weeks: 16,
+    notes: ''
+  },
+  currentSession: null,
+  sessions: [],   // saved sessions
+  weightLog: [],  // body weight entries
+  hevyData: null  // last imported CSV (filtered)
+};
+
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return structuredClone(DEFAULT_STATE);
+    const parsed = JSON.parse(raw);
+    const merged = { ...structuredClone(DEFAULT_STATE), ...parsed };
+    if (merged.currentSession) merged.currentSession = migrateSession(merged.currentSession);
+    if (Array.isArray(merged.sessions)) merged.sessions = merged.sessions.map(migrateSession);
+    return merged;
+  } catch (e) {
+    return structuredClone(DEFAULT_STATE);
+  }
+}
+
+function saveState() {
+  // If currentSession matches an existing saved session, keep them in sync
+  // so edits aren't lost when the user navigates away without tapping Save.
+  if (state.currentSession && state.currentSession.id) {
+    const idx = state.sessions.findIndex(x => x.id === state.currentSession.id);
+    if (idx >= 0) {
+      state.sessions[idx] = JSON.parse(JSON.stringify(state.currentSession));
+    }
+  }
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    toast('Could not save — storage may be full');
+  }
+}
+
+function toast(msg, ms = 1800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+// ============================================================================
+// EXERCISE TEMPLATES (per day type)
+// ============================================================================
+const DAY_TEMPLATES = {
+  'Monday — Volume': [
+    { name: 'Bench Press', primary: true, defaultSets: 4, repRange: '6–8', perSide: true },
+    { name: 'Incline DB Press', defaultSets: 3, repRange: '8–10' },
+    { name: 'DB Chest Fly', defaultSets: 3, repRange: '12–15' },
+    { name: 'Lat Pulldown', defaultSets: 4, repRange: '10–12' },
+    { name: 'Tricep Rope Pushdown', defaultSets: 3, repRange: '15' }
+  ],
+  'Wednesday — Weak Points': [
+    { name: 'Paused Bench (2-sec)', primary: true, defaultSets: 4, repRange: '3–4', perSide: true },
+    { name: 'Close-Grip Bench', defaultSets: 3, repRange: '6–8', perSide: true },
+    { name: 'DB Lateral Raises', defaultSets: 4, repRange: '15' },
+    { name: 'Face Pulls', defaultSets: 3, repRange: '15' }
+  ],
+  'Friday — Heavy': [
+    { name: 'Bench Press', primary: true, defaultSets: 5, repRange: '2–3', perSide: true },
+    { name: 'Heavy DB Rows', defaultSets: 4, repRange: '8' },
+    { name: 'Overhead Tricep Ext', defaultSets: 3, repRange: '10–12' },
+    { name: 'Seated Incline Bicep Curls', defaultSets: 3, repRange: '10' }
+  ]
+};
+
+// 16-week loading matrix (per-side bench weights)
+const MATRIX = [
+  { week: 1, label: 'Week 1 (revised)', mon: '4×6–8 @ 10 kg', wed: '4×3–4 @ 11.25 kg', fri: '5×2–3 @ 12.5 kg' },
+  { week: 2, label: 'Week 2 (flexible)', mon: '4×6–8 @ 11.25–12.5 kg', wed: '4×3–4 @ 12.5 kg', fri: '5×2–3 @ 13.75 kg' },
+  { week: 3, label: 'Week 3 (B1-W1)', mon: '4×6–8 @ 12.5 kg', wed: '4×3–4 @ 13.75 kg', fri: '5×2–3 @ 15.0 kg' },
+  { week: 4, label: 'Week 4 (B1-W2)', mon: '4×6–8 @ 13.75 kg', wed: '4×3–4 @ 15.0 kg', fri: '5×2–3 @ 16.25 kg' },
+  { week: 5, label: 'Week 5 (B1-W3)', mon: '4×6–8 @ 15.0 kg', wed: '4×3–4 @ 16.25 kg', fri: '5×2–3 @ 17.5 kg' },
+  { week: 6, label: 'Week 6 (B1-W4)', mon: '4×6–8 @ 16.25 kg', wed: '4×3–4 @ 17.5 kg', fri: '5×2–3 @ 18.75 kg' },
+  { week: 7, label: 'Week 7 (B1-W5 deload)', mon: '3×6 @ 12.5 kg', wed: '3×3 @ 12.5 kg', fri: '3×2 @ 13.75 kg' },
+  { week: 8, label: 'Week 8 (B2-W6)', mon: '4×5–6 @ 17.5 kg', wed: '4×3 @ 18.75 kg', fri: '4×2 @ 20.0 kg' },
+  { week: 9, label: 'Week 9 (B2-W7)', mon: '4×5–6 @ 18.75 kg', wed: '4×3 @ 20.0 kg', fri: '4×2 @ 21.25 kg' },
+  { week: 10, label: 'Week 10 (B2-W8)', mon: '4×5–6 @ 20.0 kg', wed: '4×3 @ 21.25 kg', fri: '4×2 @ 22.5 kg' },
+  { week: 11, label: 'Week 11 (B2-W9)', mon: '4×5–6 @ 21.25 kg', wed: '4×3 @ 22.5 kg', fri: '4×2 @ 23.75 kg' },
+  { week: 12, label: 'Week 12 (B2-W10)', mon: '4×5–6 @ 22.5 kg', wed: '4×3 @ 23.75 kg', fri: '3×2 @ 25.0 kg' },
+  { week: 13, label: 'Week 13 (B2-W11 deload)', mon: '3×5 @ 17.5 kg', wed: '3×3 @ 17.5 kg', fri: '3×2 @ 18.75 kg' },
+  { week: 14, label: 'Week 14 (B3-W12)', mon: '3×4–5 @ 23.75 kg', wed: '3×2 @ 25.0 kg', fri: '3×1 @ 26.25 kg' },
+  { week: 15, label: 'Week 15 (B3-W13)', mon: '3×4–5 @ 25.0 kg', wed: '3×2 @ 26.25 kg', fri: '3×1 @ 27.5 kg' },
+  { week: 16, label: 'Week 16 — TEST', mon: '1RM @ 30 kg/side (80 kg total)', wed: 'optional pump', fri: 'optional pump' }
+];
+
+// ============================================================================
+// TABS
+// ============================================================================
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('pane-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'history') renderHistory();
+    if (btn.dataset.tab === 'weight') renderWeightLog();
+    if (btn.dataset.tab === 'matrix') renderMatrix();
+    if (btn.dataset.tab === 'data') updateLastBackupInfo();
+  });
+});
+
+// ============================================================================
+// TODAY'S SESSION — RENDERING & EDITING
+// ============================================================================
+function blankSession() {
+  return {
+    id: 'sess_' + Date.now(),
+    date: todayISO(),
+    week: state.currentSession?.week || 4,
+    dayType: 'Monday — Volume',
+    context: { pickleball: false, poorSleep: false, rested: false, stressed: false, time: '', energy: null },
+    coachSummary: '',   // session-level: Claude's prescription summary for this session
+    coachFlags: '',     // session-level: open flags Claude asked athlete to address
+    exercises: [],
+    remarks: '',
+    savedAt: null
+  };
+}
+
+function migrateSession(s) {
+  // Backfill missing fields on older saved sessions
+  if (typeof s.coachSummary !== 'string') s.coachSummary = '';
+  if (typeof s.coachFlags !== 'string') s.coachFlags = '';
+  if (Array.isArray(s.exercises)) {
+    s.exercises.forEach(ex => {
+      if (typeof ex.rationale !== 'string') ex.rationale = '';
+    });
+  }
+  return s;
+}
+
+function todayISO() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
+
+function loadDayTemplate() {
+  const dayType = document.getElementById('session-day').value;
+  const template = DAY_TEMPLATES[dayType];
+  state.currentSession = state.currentSession || blankSession();
+  state.currentSession.dayType = dayType;
+  state.currentSession.exercises = template.map(t => ({
+    name: t.name,
+    primary: !!t.primary,
+    perSide: !!t.perSide,
+    repRange: t.repRange,
+    targetText: '',  // filled by user / coach
+    rationale: '',   // 1-line rationale from Claude (e.g. "1.25kg jump, set 4 ceiling clean")
+    sets: Array.from({ length: t.defaultSets }, () => ({ weight: '', reps: '', rpe: '' })),
+    comment: ''
+  }));
+  renderExercises();
+  saveState();
+}
+
+function renderExercises() {
+  const container = document.getElementById('exercises-container');
+  container.innerHTML = '';
+  if (!state.currentSession || !state.currentSession.exercises.length) {
+    container.innerHTML = '<div class="empty-state">Pick a day type and tap "Reload day template" to get started.</div>';
+    return;
+  }
+  state.currentSession.exercises.forEach((ex, exIdx) => {
+    const block = document.createElement('div');
+    block.className = 'exercise-block';
+    if (ex.sets.some(s => s.weight || s.reps)) block.classList.add('has-data');
+
+    const unitLabel = ex.perSide ? 'kg/side' : 'kg';
+    const targetPlaceholder = `e.g. ${ex.repRange} reps · weight per coach`;
+
+    block.innerHTML = `
+      <div class="ex-header">
+        <div class="ex-name">${ex.name}${ex.primary ? ' <span class="pill accent">Primary</span>' : ''}</div>
+      </div>
+      <label>Prescribed target <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-faint);">(from Claude)</span></label>
+      <input type="text" data-ex-target="${exIdx}" value="${escapeHtml(ex.targetText)}" placeholder="${targetPlaceholder}">
+
+      <label>Coach's rationale <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink-faint);">(why this weight/rep target — 1 line)</span></label>
+      <input type="text" data-ex-rationale="${exIdx}" value="${escapeHtml(ex.rationale || '')}" placeholder="e.g. matrix progression, set 4 ceiling clean at 9 reps">
+
+      <table class="sets">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Weight (${unitLabel})</th>
+            <th>Reps</th>
+            <th>RPE /10</th>
+          </tr>
+        </thead>
+        <tbody data-sets="${exIdx}">
+          ${ex.sets.map((s, i) => `
+            <tr>
+              <td class="set-num">${i + 1}</td>
+              <td><input type="number" step="0.25" data-set-weight="${exIdx},${i}" value="${s.weight}" inputmode="decimal"></td>
+              <td><input type="number" step="1" data-set-reps="${exIdx},${i}" value="${s.reps}" inputmode="numeric"></td>
+              <td><input type="number" step="1" min="1" max="10" data-set-rpe="${exIdx},${i}" value="${s.rpe}" inputmode="numeric"></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <div style="display:flex; gap:6px; margin: 4px 0 8px;">
+        <button class="icon-btn" data-add-set="${exIdx}" title="Add set">+</button>
+        <button class="icon-btn" data-remove-set="${exIdx}" title="Remove last set">−</button>
+      </div>
+
+      <label>Comment (this exercise)</label>
+      <textarea rows="2" data-ex-comment="${exIdx}" placeholder="e.g. left side lagged, rope crash mid-set, felt strong off chest">${escapeHtml(ex.comment)}</textarea>
+    `;
+    container.appendChild(block);
+  });
+  bindExerciseInputs();
+}
+
+function bindExerciseInputs() {
+  document.querySelectorAll('[data-ex-target]').forEach(el => {
+    el.addEventListener('input', e => {
+      const idx = +el.dataset.exTarget;
+      state.currentSession.exercises[idx].targetText = el.value;
+      saveState();
+    });
+  });
+  document.querySelectorAll('[data-ex-rationale]').forEach(el => {
+    el.addEventListener('input', e => {
+      const idx = +el.dataset.exRationale;
+      state.currentSession.exercises[idx].rationale = el.value;
+      saveState();
+    });
+  });
+  document.querySelectorAll('[data-ex-comment]').forEach(el => {
+    el.addEventListener('input', () => {
+      const idx = +el.dataset.exComment;
+      state.currentSession.exercises[idx].comment = el.value;
+      saveState();
+    });
+  });
+  ['weight', 'reps', 'rpe'].forEach(field => {
+    document.querySelectorAll(`[data-set-${field}]`).forEach(el => {
+      el.addEventListener('input', () => {
+        const [exIdx, setIdx] = el.dataset[`set${field.charAt(0).toUpperCase() + field.slice(1)}`].split(',').map(Number);
+        state.currentSession.exercises[exIdx].sets[setIdx][field] = el.value;
+        saveState();
+      });
+    });
+  });
+  document.querySelectorAll('[data-add-set]').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = +el.dataset.addSet;
+      state.currentSession.exercises[idx].sets.push({ weight: '', reps: '', rpe: '' });
+      saveState();
+      renderExercises();
+    });
+  });
+  document.querySelectorAll('[data-remove-set]').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = +el.dataset.removeSet;
+      const sets = state.currentSession.exercises[idx].sets;
+      if (sets.length > 1) sets.pop();
+      saveState();
+      renderExercises();
+    });
+  });
+}
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[m]));
+}
+
+// ============================================================================
+// TODAY — TOP-LEVEL FIELDS
+// ============================================================================
+function bindTopFields() {
+  const map = [
+    ['session-date', 'date'],
+    ['session-day', 'dayType'],
+    ['session-week', 'week'],
+    ['session-remarks', 'remarks'],
+    ['coach-summary', 'coachSummary'],
+    ['coach-flags', 'coachFlags']
+  ];
+  map.forEach(([id, key]) => {
+    document.getElementById(id).addEventListener('input', e => {
+      if (!state.currentSession) state.currentSession = blankSession();
+      state.currentSession[key] = e.target.value;
+      if (key === 'week') updateHeaderMeta();
+      saveState();
+    });
+  });
+  // context checkboxes
+  ['pickleball', 'poorSleep', 'rested', 'stressed'].forEach(k => {
+    const id = 'ctx-' + k.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', () => {
+      if (!state.currentSession) state.currentSession = blankSession();
+      state.currentSession.context[k] = el.checked;
+      saveState();
+    });
+  });
+  document.getElementById('ctx-time').addEventListener('change', e => {
+    if (!state.currentSession) state.currentSession = blankSession();
+    state.currentSession.context.time = e.target.value;
+    saveState();
+  });
+  document.getElementById('ctx-energy').addEventListener('input', e => {
+    if (!state.currentSession) state.currentSession = blankSession();
+    state.currentSession.context.energy = e.target.value;
+    saveState();
+  });
+
+  document.getElementById('reset-exercises').addEventListener('click', () => {
+    if (state.currentSession?.exercises?.some(ex => ex.sets.some(s => s.weight || s.reps))) {
+      if (!confirm('This will replace your current exercises with the day-type template. Continue?')) return;
+    }
+    loadDayTemplate();
+  });
+  document.getElementById('save-session').addEventListener('click', saveSession);
+  document.getElementById('clear-session').addEventListener('click', () => {
+    if (!confirm('Clear today\'s in-progress session?')) return;
+    state.currentSession = blankSession();
+    saveState();
+    hydrateTodayPane();
+  });
+  document.getElementById('edit-mode-exit').addEventListener('click', () => {
+    // Leave the saved session intact (auto-save has already mirrored edits to it).
+    // Just start fresh in the Today pane.
+    state.currentSession = blankSession();
+    saveState();
+    hydrateTodayPane();
+    toast('Returned to a blank session');
+  });
+}
+
+function hydrateTodayPane() {
+  if (!state.currentSession) state.currentSession = blankSession();
+  const s = state.currentSession;
+  document.getElementById('session-date').value = s.date || todayISO();
+  document.getElementById('session-day').value = s.dayType || 'Monday — Volume';
+  document.getElementById('session-week').value = s.week || 4;
+  document.getElementById('session-remarks').value = s.remarks || '';
+  document.getElementById('coach-summary').value = s.coachSummary || '';
+  document.getElementById('coach-flags').value = s.coachFlags || '';
+  document.getElementById('ctx-pickleball').checked = !!s.context?.pickleball;
+  document.getElementById('ctx-poor-sleep').checked = !!s.context?.poorSleep;
+  document.getElementById('ctx-rested').checked = !!s.context?.rested;
+  document.getElementById('ctx-stressed').checked = !!s.context?.stressed;
+  document.getElementById('ctx-time').value = s.context?.time || '';
+  document.getElementById('ctx-energy').value = s.context?.energy || '';
+  if (!s.exercises || !s.exercises.length) loadDayTemplate();
+  else renderExercises();
+  updateHeaderMeta();
+  updateEditBanner();
+}
+
+function updateEditBanner() {
+  const banner = document.getElementById('edit-mode-banner');
+  if (!banner) return;
+  const s = state.currentSession;
+  const isEditing = s && s.id && state.sessions.some(x => x.id === s.id);
+  if (isEditing) {
+    document.getElementById('edit-mode-label').textContent = `W${s.week || '?'} · ${s.dayType || ''} · ${s.date || ''}`;
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function updateHeaderMeta() {
+  const w = state.currentSession?.week || '—';
+  document.getElementById('header-week-meta').textContent = `Week ${w} / 16`;
+}
+
+function saveSession() {
+  if (!state.currentSession) return;
+  const s = state.currentSession;
+  const hasAnyData = s.exercises.some(ex => ex.sets.some(set => set.weight || set.reps));
+  if (!hasAnyData && !s.remarks && !s.coachSummary) {
+    if (!confirm('No data logged. Save empty session anyway?')) return;
+  }
+  s.savedAt = new Date().toISOString();
+  // upsert by id
+  const existingIdx = state.sessions.findIndex(x => x.id === s.id);
+  const wasEditing = existingIdx >= 0;
+  if (wasEditing) state.sessions[existingIdx] = JSON.parse(JSON.stringify(s));
+  else state.sessions.push(JSON.parse(JSON.stringify(s)));
+  // start a fresh current session
+  state.currentSession = blankSession();
+  saveState();
+  hydrateTodayPane();
+  toast(wasEditing ? 'Session updated' : 'Session saved');
+}
+
+// ============================================================================
+// BODY WEIGHT
+// ============================================================================
+function renderWeightLog() {
+  const container = document.getElementById('weight-log');
+  if (!state.weightLog.length) {
+    container.innerHTML = '<div class="empty-state">No weigh-ins logged yet.</div>';
+    return;
+  }
+  const sorted = [...state.weightLog].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  container.innerHTML = sorted.map((w, i) => {
+    const prev = sorted[i + 1];
+    let delta = '';
+    if (prev && prev.kg) {
+      const d = (w.kg - prev.kg);
+      const cls = d > 0.05 ? 'up' : (d < -0.05 ? 'down' : 'flat');
+      const sign = d > 0 ? '+' : '';
+      delta = `<span class="delta ${cls}">${sign}${d.toFixed(1)} kg</span>`;
+    }
+    return `
+      <div class="weight-log-entry">
+        <span class="week">W${w.week || '?'}</span>
+        <span class="date">${w.date || ''}</span>
+        <span class="kg">${w.kg.toFixed(1)} kg</span>
+        ${delta}
+        <span style="flex:1; font-size:12px; color:var(--ink-muted);">${escapeHtml(w.note || '')}</span>
+        <button class="icon-btn" data-del-weight="${w.id}" title="Delete">×</button>
+      </div>
+    `;
+  }).join('');
+  container.querySelectorAll('[data-del-weight]').forEach(el => {
+    el.addEventListener('click', () => {
+      state.weightLog = state.weightLog.filter(w => w.id !== el.dataset.delWeight);
+      saveState();
+      renderWeightLog();
+    });
+  });
+}
+
+document.getElementById('bw-add').addEventListener('click', () => {
+  const week = +document.getElementById('bw-week').value;
+  const date = document.getElementById('bw-date').value || todayISO();
+  const kg = parseFloat(document.getElementById('bw-kg').value);
+  const note = document.getElementById('bw-note').value;
+  if (!kg || isNaN(kg)) { toast('Enter a valid weight'); return; }
+  state.weightLog.push({ id: 'w_' + Date.now(), week, date, kg, note });
+  saveState();
+  document.getElementById('bw-kg').value = '';
+  document.getElementById('bw-note').value = '';
+  renderWeightLog();
+  toast('Weigh-in logged');
+});
+
+// ============================================================================
+// HISTORY
+// ============================================================================
+function renderHistory() {
+  const container = document.getElementById('history-list');
+  if (!state.sessions.length) {
+    container.innerHTML = '<div class="empty-state">No saved sessions yet. Log today\'s session and tap "Save".</div>';
+    return;
+  }
+  const sorted = [...state.sessions].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const editingId = state.currentSession?.id;
+  container.innerHTML = sorted.map(s => {
+    const setCount = s.exercises.reduce((sum, ex) => sum + ex.sets.filter(set => set.weight || set.reps).length, 0);
+    const isEditing = s.id === editingId;
+    return `
+      <div class="history-item" style="${isEditing ? 'border-color: var(--accent); background: #fef9f5;' : ''}">
+        <div>
+          <div class="focus">W${s.week || '?'} · ${escapeHtml(s.dayType || '')}${isEditing ? ' <span class="pill accent">editing</span>' : ''}</div>
+          <div class="date">${s.date || ''} · ${setCount} sets logged</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn ghost small" data-edit-sess="${s.id}">${isEditing ? 'Continue' : 'Edit'}</button>
+          <button class="btn small" style="background: var(--danger); color: var(--paper);" data-del-sess="${s.id}">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  container.querySelectorAll('[data-edit-sess]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.editSess;
+      const sess = state.sessions.find(x => x.id === id);
+      if (!sess) { toast('Session not found'); renderHistory(); return; }
+      // If we're already editing a different session with unsaved-Save state, warn
+      const currId = state.currentSession?.id;
+      const currIsSaved = state.sessions.some(x => x.id === currId);
+      const currHasContent = state.currentSession?.exercises?.some(ex => ex.sets.some(set => set.weight || set.reps));
+      if (currId !== id && !currIsSaved && currHasContent) {
+        if (!confirm('You have an in-progress session that hasn\'t been saved. Loading this one will discard those changes. Continue?')) return;
+      }
+      // Load the saved session into currentSession (deep copy by reference to keep id)
+      state.currentSession = JSON.parse(JSON.stringify(sess));
+      saveState();
+      hydrateTodayPane();
+      document.querySelector('nav.tabs button[data-tab="today"]').click();
+      toast(`Now editing W${sess.week} ${sess.dayType.split(' — ')[0]}`);
+    });
+  });
+  container.querySelectorAll('[data-del-sess]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.delSess;
+      const sess = state.sessions.find(x => x.id === id);
+      if (!sess) { renderHistory(); return; }
+      const label = `W${sess.week} · ${sess.dayType} · ${sess.date}`;
+      if (!confirm(`Delete this session permanently?\n\n${label}\n\nThis cannot be undone.`)) return;
+      state.sessions = state.sessions.filter(x => x.id !== id);
+      // If currently editing this one, clear out
+      if (state.currentSession?.id === id) {
+        state.currentSession = blankSession();
+        hydrateTodayPane();
+      }
+      // Persist directly (don't go through saveState's sync logic since the session is gone)
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+      renderHistory();
+      toast('Session deleted');
+    });
+  });
+}
+
+// ============================================================================
+// MATRIX TABLE
+// ============================================================================
+function renderMatrix() {
+  const wk = state.currentSession?.week || 4;
+  const html = `
+    <table class="matrix">
+      <thead>
+        <tr><th>Wk</th><th>Mon · Volume</th><th>Wed · Paused</th><th>Fri · Heavy</th></tr>
+      </thead>
+      <tbody>
+        ${MATRIX.map(row => `
+          <tr class="${row.week === +wk ? 'current' : ''}">
+            <td><strong>${row.week}</strong></td>
+            <td>${row.mon}</td>
+            <td>${row.wed}</td>
+            <td>${row.fri}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+  document.getElementById('matrix-container').innerHTML = html;
+}
+
+// ============================================================================
+// HEVY CSV INGEST
+// ============================================================================
+function parseCSV(text) {
+  // Minimal RFC4180-ish parser for Hevy export format
+  const rows = [];
+  let i = 0, field = '', row = [], inQ = false;
+  while (i < text.length) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i += 2; continue; }
+      if (c === '"') { inQ = false; i++; continue; }
+      field += c; i++;
+    } else {
+      if (c === '"') { inQ = true; i++; continue; }
+      if (c === ',') { row.push(field); field = ''; i++; continue; }
+      if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; i++; continue; }
+      if (c === '\r') { i++; continue; }
+      field += c; i++;
+    }
+  }
+  if (field || row.length) { row.push(field); rows.push(row); }
+  if (!rows.length) return [];
+  const header = rows[0];
+  return rows.slice(1).filter(r => r.length === header.length).map(r => {
+    const o = {};
+    header.forEach((h, idx) => o[h] = r[idx]);
+    return o;
+  });
+}
+
+function parseHevyDate(str) {
+  // "3 May 2026, 18:21"
+  if (!str) return null;
+  const m = str.match(/^(\d+)\s+(\w+)\s+(\d{4}),\s+(\d+):(\d+)$/);
+  if (!m) return null;
+  const months = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+  return new Date(+m[3], months[m[2]], +m[1], +m[4], +m[5]);
+}
+
+function ingestHevyCSV(text) {
+  const rows = parseCSV(text);
+  if (!rows.length) { toast('CSV looked empty'); return; }
+  const filtered = rows.filter(r => {
+    const d = parseHevyDate(r.start_time);
+    return d && d >= HEVY_FILTER_DATE;
+  });
+  // Group by workout (title + start_time)
+  const sessions = {};
+  filtered.forEach(r => {
+    const key = `${r.title}|${r.start_time}`;
+    if (!sessions[key]) {
+      sessions[key] = {
+        title: r.title,
+        start_time: r.start_time,
+        date: parseHevyDate(r.start_time),
+        exercises: {}
+      };
+    }
+    const ex = r.exercise_title;
+    if (!sessions[key].exercises[ex]) sessions[key].exercises[ex] = [];
+    sessions[key].exercises[ex].push({
+      set_index: +r.set_index,
+      weight_kg: r.weight_kg ? parseFloat(r.weight_kg) : null,
+      reps: r.reps ? parseInt(r.reps) : null,
+      rpe: r.rpe ? parseFloat(r.rpe) : null,
+      set_type: r.set_type
+    });
+  });
+  state.hevyData = {
+    importedAt: new Date().toISOString(),
+    sessionCount: Object.keys(sessions).length,
+    sessions: Object.values(sessions)
+  };
+  saveState();
+  document.getElementById('csv-status').innerHTML =
+    `<span class="pill good">Loaded</span> ${state.hevyData.sessionCount} sessions from Apr 2026 onward.`;
+  toast('Hevy CSV ingested');
+}
+
+document.getElementById('csv-file').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => ingestHevyCSV(reader.result);
+  reader.readAsText(f);
+});
+
+// drag-drop
+const csvDrop = document.getElementById('csv-drop');
+['dragenter', 'dragover'].forEach(ev => csvDrop.addEventListener(ev, e => {
+  e.preventDefault(); csvDrop.classList.add('drag-over');
+}));
+['dragleave', 'drop'].forEach(ev => csvDrop.addEventListener(ev, e => {
+  e.preventDefault(); csvDrop.classList.remove('drag-over');
+}));
+csvDrop.addEventListener('drop', e => {
+  const f = e.dataTransfer.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => ingestHevyCSV(reader.result);
+  reader.readAsText(f);
+});
+
+// ============================================================================
+// MD GENERATION
+// ============================================================================
+function generateMD() {
+  const ask = document.getElementById('export-ask').value.trim() || '(no specific ask — provide a full week review and prescribe the next 3 sessions)';
+  const histDepth = document.querySelector('input[name="hist-depth"]:checked').value;
+
+  // Sort sessions by date desc
+  const sortedSessions = [...state.sessions].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  let detailed, summarized;
+  if (histDepth === 'all') {
+    detailed = sortedSessions; summarized = [];
+  } else {
+    const cutoffWeeks = parseInt(histDepth);
+    const latestWeek = sortedSessions[0]?.week || 1;
+    const minWeek = latestWeek - cutoffWeeks + 1;
+    detailed = sortedSessions.filter(s => (s.week || 0) >= minWeek);
+    summarized = sortedSessions.filter(s => (s.week || 0) < minWeek);
+  }
+
+  // Group detailed sessions by week
+  const byWeek = {};
+  detailed.forEach(s => {
+    const w = s.week || 0;
+    if (!byWeek[w]) byWeek[w] = [];
+    byWeek[w].push(s);
+  });
+  const weekKeys = Object.keys(byWeek).map(Number).sort((a, b) => b - a);
+
+  // Latest body weight + trend
+  const sortedW = [...state.weightLog].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const latestW = sortedW[0];
+  const prevW = sortedW[1];
+  let bwLine = '—';
+  if (latestW) {
+    bwLine = `${latestW.kg.toFixed(1)} kg (W${latestW.week})`;
+    if (prevW) {
+      const d = latestW.kg - prevW.kg;
+      bwLine += ` · trend ${d >= 0 ? '+' : ''}${d.toFixed(1)} kg vs W${prevW.week}`;
+    }
+  }
+
+  // Current week + last completed
+  const latestSess = sortedSessions[0];
+  const currentWeek = latestSess?.week || state.currentSession?.week || '—';
+  const lastCompleted = latestSess ? `Week ${latestSess.week} — ${latestSess.dayType} (${latestSess.date})` : '—';
+
+  // Profile
+  const p = state.profile;
+
+  // === BUILD MARKDOWN ===
+  let md = '';
+
+  md += `# 🏋️ BENCH PRESS COACHING BRIEF\n`;
+  md += `*Auto-generated handoff. Pasted into Claude as the prompt.*\n\n`;
+  md += `**Generated:** ${new Date().toISOString().slice(0, 16).replace('T', ' ')} · `;
+  md += `**Program Week:** ${currentWeek} of ${p.weeks} · `;
+  md += `**Goal:** ${p.goalKg} kg 1RM\n\n---\n\n`;
+
+  // §1 The Ask
+  md += `## 🎯 1. THE ASK\n\n`;
+  md += `> ${ask}\n\n`;
+  md += `You are this athlete's strength and conditioning coach. Sections 2–6 below give you full context. Use them.\n\n---\n\n`;
+
+  // §2 Athlete & Goal
+  md += `## 👤 2. ATHLETE & GOAL\n\n`;
+  md += `| Field | Value |\n|---|---|\n`;
+  md += `| Age / Sex | ${p.age} / M |\n`;
+  md += `| Height | ${p.height} cm |\n`;
+  md += `| Body Weight | ${bwLine} |\n`;
+  md += `| Training | 3×/wk lifting (Mon/Wed/Fri) + light pickleball 2–3×/wk |\n`;
+  md += `| Background | Returned after ~6-month layoff |\n\n`;
+  md += `**Goal:** ${p.goalKg} kg total bench 1RM (30 kg/side + 20 kg bar) for 1 rep, in ${p.weeks} weeks.\n\n`;
+  md += `**Programme style:** Daily Undulating Periodization — Mon volume, Wed paused/technique, Fri heavy/CNS.\n\n---\n\n`;
+
+  // §3 Coaching framework
+  md += `## 🧠 3. HOW TO COACH THIS ATHLETE\n\n`;
+  md += `You are a senior strength coach. Read the data, apply expert judgment, and prescribe the next sessions. Do **not** apply rigid if-then rules — apply professional progression principles.\n\n`;
+  md += `**Core principles:**\n\n`;
+  md += `- **Read RPE, reps, and feel notes together.** Weight × reps alone is incomplete data — a "Hard" set at top of range is different from an "Easy" one at bottom.\n`;
+  md += `- **Exceeded rep target = positive progression signal.** If prescribed 10 reps and the athlete did 12 with good form (RPE ≤ 8), that is **strength gained**, not deviation. Treat as readiness for the next increment, not a reason to repeat. *(A previous version of this prompt got this wrong — don't repeat that mistake.)*\n`;
+  md += `- **Under-target with high RPE ≠ failure.** A 6/10 with RPE 9 after pickleball + poor sleep is different from the same numbers well-rested. Read context before judging.\n`;
+  md += `- **Hold weight when:** form breaks, rep drop-off > 30% across sets, new joint issues, or RPE consistently 9–10 at prescribed weight.\n`;
+  md += `- **Add weight when:** target rep range hit cleanly across all sets with RPE ≤ 8, OR top of range exceeded on at least set 1, OR athlete's own report indicates clear headroom.\n`;
+  md += `- **Matrix is a guide, not a leash.** Bench progression should stay broadly aligned with §4 to hit the W16 test cleanly; accessory progression can move faster.\n`;
+  md += `- **1-rep-shy-of-failure rule is non-negotiable.** Athlete is rebuilding from layoff.\n\n`;
+  if (p.notes && p.notes.trim()) {
+    md += `**Standing notes for this athlete:**\n\n`;
+    p.notes.trim().split('\n').filter(l => l.trim()).forEach(l => md += `- ${l.trim()}\n`);
+    md += `\n`;
+  }
+  md += `**Required response structure (every time):**\n\n`;
+  md += `1. **Session-by-session debrief** of what was just logged. Each session in §6 includes the *prior prescription summary* (your own reasoning when you prescribed this session) — read it, then evaluate how the actual performance lined up with what you predicted. If you said "set 4 ceiling clean = ready for jump" and they hit it, name that. If you flagged something and they fixed it, name that too. Honest read; praise real progress, flag real issues.\n`;
+  md += `2. **Next 3 sessions prescribed** — every exercise, target weight, target reps, brief rationale. The athlete will paste these into the logger as targets + rationale + summary, so structure matters:\n`;
+  md += `   - For each session: a 1–3 sentence **prescription summary** + (if relevant) **open flags** the athlete should watch in-session.\n`;
+  md += `   - For each exercise within: target weight × reps + a short **rationale** (one line).\n`;
+  md += `3. **Trend watch** — anything building across weeks (strength curve, recovery, imbalance, body weight, missed sessions).\n`;
+  md += `4. **One actionable cue** — single technique or habit focus for the next training block. No fluff.\n\n`;
+  md += `**Tone:** Direct, knowledgeable, motivating. The athlete has full context — don't ask them to re-explain.\n\n---\n\n`;
+
+  // §4 Matrix
+  md += `## 📊 4. THE 16-WEEK LOADING MATRIX\n\n`;
+  md += `> All weights **per side** (excluding 20 kg bar). 1.25 kg increments throughout.\n\n`;
+  md += `| Week | Mon (Volume) | Wed (Paused) | Fri (Heavy) |\n|---|---|---|---|\n`;
+  MATRIX.forEach(r => {
+    const marker = r.week === +currentWeek ? ' ← **current**' : '';
+    md += `| ${r.week} | ${r.mon} | ${r.wed} | ${r.fri}${marker} |\n`;
+  });
+  md += `\n**Accessories (constant):**\n\n`;
+  md += `- **Mon:** Incline DB Press 3×8–10 · DB Chest Fly 3×12–15 · Lat Pulldown 4×10–12 · Tricep Rope Pushdown 3×15\n`;
+  md += `- **Wed:** Close-Grip Bench 3×6–8 · DB Lateral Raises 4×15 · Face Pulls 3×15\n`;
+  md += `- **Fri:** Heavy DB Rows 4×8 · Overhead Tricep Ext 3×10–12 · Seated Incline Bicep Curls 3×10\n\n`;
+  md += `Rest: 3 min between primary bench sets · 60–90 sec accessories.\n\n---\n\n`;
+
+  // §5 Status
+  md += `## 📍 5. CURRENT STATUS\n\n`;
+  md += `| Field | Value |\n|---|---|\n`;
+  md += `| Current Week | ${currentWeek} of ${p.weeks} |\n`;
+  md += `| Last Completed | ${lastCompleted} |\n`;
+  md += `| Body Weight | ${bwLine} |\n`;
+  md += `| Sessions Logged (this program) | ${state.sessions.length} |\n`;
+  if (state.hevyData) {
+    md += `| Hevy Data | ${state.hevyData.sessionCount} sessions imported (since 7 Apr 2026) |\n`;
+  }
+  md += `\n---\n\n`;
+
+  // §6 Session History
+  md += `## 📒 6. SESSION HISTORY\n\n`;
+  md += `### Recent Sessions (full detail)\n\n`;
+
+  if (!detailed.length) {
+    md += `_No sessions logged in this app yet._\n\n`;
+  }
+
+  weekKeys.forEach(w => {
+    md += `#### Week ${w}\n\n`;
+    byWeek[w].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    byWeek[w].forEach(s => {
+      md += renderSessionMD(s);
+    });
+  });
+
+  if (summarized.length) {
+    md += `### Earlier Sessions (summary)\n\n`;
+    // Group summary by week
+    const sumByWeek = {};
+    summarized.forEach(s => {
+      const w = s.week || 0;
+      if (!sumByWeek[w]) sumByWeek[w] = [];
+      sumByWeek[w].push(s);
+    });
+    Object.keys(sumByWeek).map(Number).sort((a, b) => b - a).forEach(w => {
+      md += `**Week ${w}:** `;
+      md += sumByWeek[w].map(s => {
+        const primary = s.exercises.find(ex => ex.primary);
+        if (!primary) return s.dayType;
+        const completedSets = primary.sets.filter(set => set.weight && set.reps);
+        if (!completedSets.length) return `${s.dayType} (no data)`;
+        const summary = completedSets.map(set => `${set.weight}×${set.reps}`).join('/');
+        return `${s.dayType.split(' — ')[0]}: ${primary.name} ${summary}`;
+      }).join(' · ');
+      md += `\n`;
+    });
+    md += `\n`;
+  }
+
+  md += `---\n\n`;
+
+  // §7 Body weight log
+  if (state.weightLog.length) {
+    md += `## ⚖️ 7. BODY WEIGHT LOG\n\n`;
+    md += `| Week | Date | Weight | Δ | Note |\n|---|---|---|---|---|\n`;
+    const sortedAsc = [...state.weightLog].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    sortedAsc.forEach((w, i) => {
+      const prev = sortedAsc[i - 1];
+      let d = '';
+      if (prev) {
+        const diff = w.kg - prev.kg;
+        d = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+      }
+      md += `| W${w.week || '?'} | ${w.date || ''} | ${w.kg.toFixed(1)} kg | ${d} | ${(w.note || '').replace(/\|/g, '/')} |\n`;
+    });
+    md += `\n---\n\n`;
+  }
+
+  // §8 Hevy raw (if available, only matching/extra sessions)
+  if (state.hevyData && state.hevyData.sessions.length) {
+    md += `## 📎 8. APPENDIX — HEVY RAW DATA\n\n`;
+    md += `<details>\n<summary>Click to expand · ${state.hevyData.sessionCount} sessions from Hevy (since 7 Apr 2026)</summary>\n\n`;
+    state.hevyData.sessions.sort((a, b) => (b.date - a.date)).forEach(sess => {
+      md += `**${sess.title}** — ${sess.start_time}\n`;
+      Object.entries(sess.exercises).forEach(([exName, sets]) => {
+        const setsStr = sets.sort((a, b) => a.set_index - b.set_index)
+          .map(s => `${s.weight_kg ?? '?'}×${s.reps ?? '?'}${s.rpe ? ` (RPE ${s.rpe})` : ''}`).join(' · ');
+        md += `- *${exName}:* ${setsStr}\n`;
+      });
+      md += `\n`;
+    });
+    md += `</details>\n\n`;
+  }
+
+  md += `*End of brief. Coach the next 3 sessions.*\n`;
+  return md;
+}
+
+function renderSessionMD(s) {
+  let md = `**${s.dayType}** · ${s.date}\n\n`;
+
+  // Coach's prescription summary (Claude's own prior reasoning for this session)
+  if (s.coachSummary && s.coachSummary.trim()) {
+    md += `> **Coach's prescription (set in prior chat):** ${s.coachSummary.trim().replace(/\n/g, ' ')}\n\n`;
+  }
+  if (s.coachFlags && s.coachFlags.trim()) {
+    md += `> **Open flags going in:** ${s.coachFlags.trim().replace(/\n/g, ' ')}\n\n`;
+  }
+
+  // Pre-session context
+  const ctx = s.context || {};
+  const ctxBits = [];
+  if (ctx.time) ctxBits.push(ctx.time);
+  if (ctx.energy) ctxBits.push(`Energy ${ctx.energy}/10`);
+  if (ctx.pickleball) ctxBits.push('pickleball today/yesterday');
+  if (ctx.poorSleep) ctxBits.push('poor sleep');
+  if (ctx.rested) ctxBits.push('well rested');
+  if (ctx.stressed) ctxBits.push('stressed');
+  if (ctxBits.length) md += `_Pre-session: ${ctxBits.join(' · ')}_\n\n`;
+
+  s.exercises.forEach(ex => {
+    const hasData = ex.sets.some(set => set.weight || set.reps);
+    if (!hasData && !ex.targetText && !ex.comment && !ex.rationale) return;
+    const unit = ex.perSide ? 'kg/side' : 'kg';
+    const targetStr = ex.targetText ? ` · Target: ${ex.targetText}` : '';
+    md += `**${ex.name}**${targetStr}\n\n`;
+    if (ex.rationale && ex.rationale.trim()) {
+      md += `_Rationale: ${ex.rationale.trim()}_\n\n`;
+    }
+    md += `| Set | Weight (${unit}) | Reps | RPE |\n|---|---|---|---|\n`;
+    ex.sets.forEach((set, i) => {
+      const w = set.weight || '—';
+      const r = set.reps || '—';
+      const rpe = set.rpe || '—';
+      md += `| ${i + 1} | ${w} | ${r} | ${rpe} |\n`;
+    });
+    if (ex.comment) md += `\n_Comment: ${ex.comment.replace(/\n/g, ' ')}_\n`;
+    md += `\n`;
+  });
+
+  if (s.remarks) md += `> **Session remarks (athlete):** ${s.remarks.replace(/\n/g, ' ')}\n\n`;
+  md += `---\n\n`;
+  return md;
+}
+
+document.getElementById('generate-md').addEventListener('click', () => {
+  const md = generateMD();
+  document.getElementById('md-output').textContent = md;
+  document.getElementById('copy-md').disabled = false;
+  document.getElementById('download-md').disabled = false;
+  window._lastMD = md;
+});
+
+document.getElementById('copy-md').addEventListener('click', async () => {
+  if (!window._lastMD) return;
+  try {
+    await navigator.clipboard.writeText(window._lastMD);
+    toast('Copied to clipboard');
+  } catch (e) {
+    // fallback: select the output
+    const range = document.createRange();
+    range.selectNode(document.getElementById('md-output'));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    toast('Copied (fallback)');
+  }
+});
+
+document.getElementById('download-md').addEventListener('click', () => {
+  if (!window._lastMD) return;
+  const blob = new Blob([window._lastMD], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bench_brief_${todayISO()}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// ============================================================================
+// COACH RESPONSE PARSER — parse Claude's prescriptions for upcoming sessions
+// ============================================================================
+function parseCoachResponse(text, targetWeek) {
+  // Detect day-heading lines. Claude tends to write things like:
+  //   "Mon 5/4 — Volume", "Wed 5/6 — Paused/Technique", "Fri 5/8 — Heavy"
+  //   or "Monday — Volume Day", "Wednesday — Weak Points", "Friday — Heavy"
+  // Strategy: split text on lines that look like day headings, then per-block
+  // extract: prescription summary, open flag, exercise table.
+
+  const lines = text.split('\n');
+  const blocks = [];
+  let curBlock = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const t = lines[i].trim();
+    // Heading detection — must contain a day name AND not be a generic prose mention
+    const dayPattern = /^(?:#+\s*)?(?:\*+)?\s*(Mon(?:day)?|Wed(?:nesday)?|Fri(?:day)?)\b/i;
+    const m = t.match(dayPattern);
+    // Reduce false positives: heading lines are short (< 80 chars) and contain a workout type or em-dash
+    const looksLikeHeading = m && t.length < 100 && (
+      /—|–|-/.test(t) ||
+      /volume|paused|weak|heavy|technique/i.test(t)
+    );
+    if (looksLikeHeading) {
+      if (curBlock) blocks.push(curBlock);
+      let dayType = null;
+      const tl = t.toLowerCase();
+      if (tl.includes('mon')) dayType = 'Monday — Volume';
+      else if (tl.includes('wed')) dayType = 'Wednesday — Weak Points';
+      else if (tl.includes('fri')) dayType = 'Friday — Heavy';
+      curBlock = { dayType, headingLine: t, body: [] };
+      continue;
+    }
+    if (curBlock) curBlock.body.push(lines[i]);
+  }
+  if (curBlock) blocks.push(curBlock);
+
+  // For each block, extract structure
+  const sessions = [];
+  for (const blk of blocks) {
+    if (!blk.dayType) continue;
+    const bodyText = blk.body.join('\n');
+    // Prescription summary: capture text after "Prescription summary:" up to the next "Open flag" / "Exercise" / table boundary
+    let summary = '';
+    const sumMatch = bodyText.match(/Prescription\s+summary\s*:?\s*([\s\S]*?)(?=\s*(?:Open\s+flags?\s*:|Exercise\s*Target|\n\s*\||\n\s*Exercise\b|\n\n|$))/i);
+    if (sumMatch) summary = sumMatch[1].trim().replace(/\s+/g, ' ');
+
+    // Open flag(s)
+    let flags = '';
+    const flagMatch = bodyText.match(/Open\s+flags?\s*:?\s*([\s\S]*?)(?=\s*(?:Exercise\s*Target|\n\s*\||\n\s*Exercise\b|\n\n|$))/i);
+    if (flagMatch) flags = flagMatch[1].trim().replace(/\s+/g, ' ');
+
+    // Exercise table: try markdown-style table first, then flat table.
+    const exercises = [];
+
+    // Pattern A: pipe-delimited markdown table
+    const tableLines = bodyText.split('\n').filter(l => l.trim().startsWith('|') && l.trim().endsWith('|'));
+    if (tableLines.length >= 2) {
+      const rows = tableLines.map(l => l.trim().split('|').slice(1, -1).map(c => c.trim()));
+      const headerIdx = rows.findIndex(r => /exercise/i.test(r[0]));
+      if (headerIdx >= 0) {
+        const header = rows[headerIdx].map(c => c.toLowerCase());
+        const targetCol = header.findIndex(c => /target/i.test(c));
+        const ratCol = header.findIndex(c => /rationale|note|reason/i.test(c));
+        for (let r = headerIdx + 1; r < rows.length; r++) {
+          const row = rows[r];
+          if (row.every(c => /^:?-+:?$/.test(c) || c === '')) continue;
+          if (!row[0]) continue;
+          const exName = row[0].replace(/\*/g, '').trim();
+          const target = (targetCol >= 0 ? row[targetCol] : (row[1] || '')).replace(/\*/g, '').trim();
+          const rationale = (ratCol >= 0 ? row[ratCol] : (row[2] || '')).replace(/\*/g, '').trim();
+          if (exName.toLowerCase() === 'exercise') continue;
+          exercises.push({ rawName: exName, target, rationale });
+        }
+      }
+    }
+
+    // Pattern B: flat text without pipes (Claude sometimes outputs "Bench Press 4×6–8 @ 15.0 kg/side  Matrix progression...")
+    // Only try this if Pattern A produced nothing
+    if (exercises.length === 0) {
+      // Split body into lines, look for lines that start with an exercise-like name
+      const candidates = bodyText.split('\n').map(l => l.trim()).filter(l => l.length > 8);
+      for (const line of candidates) {
+        // Skip prescription/flag/heading lines
+        if (/^(prescription|open\s+flag|exercise|target|rationale|sets|^\*+$)/i.test(line)) continue;
+        // Must contain a "weight × reps @" or "× reps" pattern as evidence of a target
+        const targetSig = line.match(/(\d+(?:\.\d+)?)\s*(?:sets?\s*)?(?:×|x)\s*(\d+(?:[\-–]\d+)?)\s*(?:reps?)?\s*(?:@\s*\*?\*?(\d+(?:\.\d+)?)\s*kg)?/i);
+        if (!targetSig) continue;
+        // Heuristic: exercise name = leading text up until a digit/×/@ break
+        const splitIdx = line.search(/\d|×|x\s*\d|@/);
+        if (splitIdx < 3) continue;
+        const exName = line.slice(0, splitIdx).replace(/[\*\-–—:|]+$/g, '').trim();
+        const rest = line.slice(splitIdx).trim();
+        // Try to find rationale after a 2-space gap or an em-dash
+        const restParts = rest.split(/  +|\s+—\s+|\s+-\s+/);
+        const target = restParts[0].trim();
+        const rationale = restParts.slice(1).join(' — ').replace(/[\*]+/g, '').trim();
+        if (exName.length < 30 && exName.length > 2) {
+          exercises.push({ rawName: exName, target, rationale });
+        }
+      }
+    }
+
+    // Pattern C: pipe-less, newline-collapsed blob
+    // Pasted from rendered HTML often loses newlines + pipes, so the table comes as:
+    //   "ExerciseTargetRationaleBench Press4×6–8 @ 15.0 kg/sideMatrix progression..."
+    // Strategy: find a "ExerciseTargetRationale" header marker, then split the rest
+    // by anchoring on canonical exercise names.
+    if (exercises.length === 0) {
+      const blob = bodyText.replace(/\n/g, ' ').replace(/\s+/g, ' ');
+      // Find header marker
+      const headerMatch = blob.match(/Exercise\s*Target\s*Rationale/i);
+      if (headerMatch) {
+        const afterHeader = blob.slice(headerMatch.index + headerMatch[0].length);
+        // Build a list of canonical exercise names that might appear in this day type
+        const candidates = (DAY_TEMPLATES[blk.dayType] || []).map(t => t.name);
+        // Extra synonyms that Claude tends to use
+        const extraSynonyms = [
+          'Bench Press', 'Paused Bench', 'Paused Bench (2-sec)', 'Close-Grip Bench',
+          'Incline DB Press', 'DB Chest Fly', 'Lat Pulldown', 'Tricep Rope Pushdown',
+          'DB Lateral Raises', 'Face Pulls', 'Heavy DB Rows', 'Overhead Tricep Ext',
+          'Seated Incline Curls', 'Seated Incline Bicep Curls', 'Bicep Curls'
+        ];
+        const allNames = [...new Set([...candidates, ...extraSynonyms])];
+        // Find positions of each canonical name in the blob (case-insensitive)
+        const hits = [];
+        for (const name of allNames) {
+          // Use a regex that matches the name as a contiguous substring
+          const re = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+          const m = afterHeader.match(re);
+          if (m) hits.push({ name, idx: m.index, length: m[0].length, raw: m[0] });
+        }
+        // De-duplicate overlapping hits — keep the earliest at each position
+        hits.sort((a, b) => a.idx - b.idx);
+        const cleanHits = [];
+        for (const h of hits) {
+          const overlapping = cleanHits.find(c => Math.abs(c.idx - h.idx) < 5);
+          if (!overlapping) cleanHits.push(h);
+          else if (h.length > overlapping.length) {
+            // Replace with a longer match (e.g. "Paused Bench (2-sec)" vs "Paused Bench")
+            const i = cleanHits.indexOf(overlapping);
+            cleanHits[i] = h;
+          }
+        }
+        cleanHits.sort((a, b) => a.idx - b.idx);
+        // Now slice between consecutive hits to get target+rationale text
+        for (let i = 0; i < cleanHits.length; i++) {
+          const start = cleanHits[i].idx + cleanHits[i].length;
+          const end = i + 1 < cleanHits.length ? cleanHits[i + 1].idx : afterHeader.length;
+          const segment = afterHeader.slice(start, end).trim();
+          // Within the segment, the target is the leading "NxN @ Wkg" pattern; rationale is whatever follows.
+          const tgtMatch = segment.match(/^(.+?(?:kg(?:\/side|\/arm)?(?:\s*\([^)]+\))?))\s*(.*)$/i);
+          let target = '', rationale = '';
+          if (tgtMatch) {
+            target = tgtMatch[1].trim();
+            rationale = tgtMatch[2].trim();
+          } else {
+            target = segment;
+          }
+          // Strip trailing partial-name fragments (in case the next hit's name accidentally bled in)
+          exercises.push({ rawName: cleanHits[i].raw, target, rationale });
+        }
+      }
+    }
+
+    sessions.push({
+      dayType: blk.dayType,
+      week: targetWeek,
+      coachSummary: summary,
+      coachFlags: flags,
+      exercises
+    });
+  }
+
+  return sessions;
+}
+
+// Build a session object from parsed coach data, populating canonical names + targets
+function buildSessionFromCoachParse(parsed) {
+  // Get the canonical exercise list for this day type
+  const tpl = DAY_TEMPLATES[parsed.dayType] || [];
+  // For each canonical exercise, find a matching parsed exercise
+  const exercises = tpl.map(t => {
+    let match = null;
+    for (const p of parsed.exercises) {
+      const canonical = matchExerciseName(p.rawName, parsed.dayType);
+      if (canonical === t.name) { match = p; break; }
+    }
+    // Default rep range from target if we can extract it
+    let setCount = t.defaultSets;
+    if (match && match.target) {
+      const setM = match.target.match(/^(\d+)\s*(?:sets?|×|x)/i);
+      if (setM) setCount = parseInt(setM[1]);
+    }
+    return {
+      name: t.name,
+      primary: !!t.primary,
+      perSide: !!t.perSide,
+      repRange: t.repRange,
+      targetText: match?.target || '',
+      rationale: match?.rationale || '',
+      sets: Array.from({ length: setCount }, () => ({ weight: '', reps: '', rpe: '' })),
+      comment: ''
+    };
+  });
+
+  // Create the session object
+  const W1_MON = new Date('2026-04-06T00:00:00');
+  const dayOffset = { 'Monday — Volume': 0, 'Wednesday — Weak Points': 2, 'Friday — Heavy': 4 };
+  const baseDays = ((parsed.week || 1) - 1) * 7 + (dayOffset[parsed.dayType] ?? 0);
+  const date = new Date(W1_MON.getTime() + baseDays * 86400000).toISOString().slice(0, 10);
+
+  return {
+    id: 'sess_coach_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+    date,
+    week: parsed.week,
+    dayType: parsed.dayType,
+    context: { pickleball: false, poorSleep: false, rested: false, stressed: false, time: '', energy: null },
+    coachSummary: parsed.coachSummary,
+    coachFlags: parsed.coachFlags,
+    exercises,
+    remarks: '',
+    savedAt: null
+  };
+}
+
+function renderCoachPreview(parsed) {
+  const container = document.getElementById('coach-preview');
+  if (!parsed.length) {
+    container.innerHTML = '<div class="empty-state">No sessions parsed. Make sure day headings (Mon/Wed/Fri) and exercise tables are in the pasted text.</div>';
+    return;
+  }
+  // Build session objects + check for duplicates
+  const sessionDrafts = parsed.map(p => buildSessionFromCoachParse(p));
+  window._coachDrafts = sessionDrafts;
+
+  container.innerHTML = sessionDrafts.map((s, idx) => {
+    const existing = state.sessions.find(x => x.week === s.week && x.dayType === s.dayType);
+    const exList = s.exercises.map((ex, eIdx) => {
+      return `
+        <div style="border-top: 1px dashed var(--paper-3); padding: 6px 0; font-size: 13px;">
+          <strong>${escapeHtml(ex.name)}</strong>
+          <div style="margin: 2px 0;"><span style="color: var(--ink-muted); font-size:11px;">Target:</span> <input type="text" data-coach-tgt="${idx},${eIdx}" value="${escapeHtml(ex.targetText)}" style="font-size:12px; padding: 4px 6px;"></div>
+          <div style="margin: 2px 0;"><span style="color: var(--ink-muted); font-size:11px;">Rationale:</span> <input type="text" data-coach-rat="${idx},${eIdx}" value="${escapeHtml(ex.rationale)}" style="font-size:12px; padding: 4px 6px;"></div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="exercise-block" style="margin-bottom: 14px;">
+        <div style="display:flex; align-items:flex-start; gap:10px;">
+          <input type="checkbox" data-coach-check="${idx}" checked style="margin-top: 4px;">
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px; flex-wrap:wrap;">
+              <strong>Week ${s.week}</strong>
+              <span class="pill accent">${s.dayType}</span>
+              <input type="date" data-coach-date="${idx}" value="${s.date}" style="width:auto; min-width:140px;">
+              ${existing ? '<span class="pill warn">Will update existing</span>' : '<span class="pill good">New</span>'}
+            </div>
+            <label style="margin-top:4px;">Prescription summary</label>
+            <textarea rows="2" data-coach-sum="${idx}" style="font-size:13px;">${escapeHtml(s.coachSummary)}</textarea>
+            <label>Open flags</label>
+            <textarea rows="2" data-coach-flag="${idx}" style="font-size:13px;">${escapeHtml(s.coachFlags)}</textarea>
+            <label>Exercises (${s.exercises.length})</label>
+            ${exList}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+document.getElementById('coach-parse').addEventListener('click', () => {
+  const text = document.getElementById('coach-import-text').value;
+  const week = parseInt(document.getElementById('coach-target-week').value);
+  if (!text.trim()) { toast('Paste some response text first'); return; }
+  if (!week || week < 1 || week > 16) { toast('Enter a valid week number'); return; }
+  const parsed = parseCoachResponse(text, week);
+  renderCoachPreview(parsed);
+  document.getElementById('coach-preview-card').style.display = 'block';
+  document.getElementById('coach-preview-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toast(`Parsed ${parsed.length} sessions`);
+});
+
+document.getElementById('coach-clear').addEventListener('click', () => {
+  document.getElementById('coach-import-text').value = '';
+  document.getElementById('coach-preview-card').style.display = 'none';
+  document.getElementById('coach-preview').innerHTML = '';
+  window._coachDrafts = null;
+});
+
+document.getElementById('coach-cancel').addEventListener('click', () => {
+  document.getElementById('coach-preview-card').style.display = 'none';
+});
+
+document.getElementById('coach-commit').addEventListener('click', () => {
+  if (!window._coachDrafts) return;
+  // Apply edits from preview
+  document.querySelectorAll('[data-coach-date]').forEach(el => {
+    const idx = +el.dataset.coachDate;
+    if (window._coachDrafts[idx]) window._coachDrafts[idx].date = el.value;
+  });
+  document.querySelectorAll('[data-coach-sum]').forEach(el => {
+    const idx = +el.dataset.coachSum;
+    if (window._coachDrafts[idx]) window._coachDrafts[idx].coachSummary = el.value;
+  });
+  document.querySelectorAll('[data-coach-flag]').forEach(el => {
+    const idx = +el.dataset.coachFlag;
+    if (window._coachDrafts[idx]) window._coachDrafts[idx].coachFlags = el.value;
+  });
+  document.querySelectorAll('[data-coach-tgt]').forEach(el => {
+    const [sIdx, eIdx] = el.dataset.coachTgt.split(',').map(Number);
+    if (window._coachDrafts[sIdx]?.exercises[eIdx]) window._coachDrafts[sIdx].exercises[eIdx].targetText = el.value;
+  });
+  document.querySelectorAll('[data-coach-rat]').forEach(el => {
+    const [sIdx, eIdx] = el.dataset.coachRat.split(',').map(Number);
+    if (window._coachDrafts[sIdx]?.exercises[eIdx]) window._coachDrafts[sIdx].exercises[eIdx].rationale = el.value;
+  });
+
+  let savedCount = 0;
+  let updatedCount = 0;
+  document.querySelectorAll('[data-coach-check]').forEach(el => {
+    if (!el.checked) return;
+    const idx = +el.dataset.coachCheck;
+    const draft = window._coachDrafts[idx];
+    if (!draft) return;
+    // Check for existing session matching week + dayType
+    const existingIdx = state.sessions.findIndex(x => x.week === draft.week && x.dayType === draft.dayType);
+    if (existingIdx >= 0) {
+      // Update coach fields on the existing session, preserve any logged set data
+      const existing = state.sessions[existingIdx];
+      existing.coachSummary = draft.coachSummary;
+      existing.coachFlags = draft.coachFlags;
+      // Update each exercise's target + rationale where matching by name
+      draft.exercises.forEach(de => {
+        const exMatch = existing.exercises.find(ex => ex.name === de.name);
+        if (exMatch) {
+          exMatch.targetText = de.targetText;
+          exMatch.rationale = de.rationale;
+        } else {
+          existing.exercises.push(de);
+        }
+      });
+      existing.savedAt = new Date().toISOString();
+      updatedCount++;
+    } else {
+      draft.savedAt = new Date().toISOString();
+      state.sessions.push(JSON.parse(JSON.stringify(draft)));
+      savedCount++;
+    }
+  });
+  saveState();
+  document.getElementById('coach-preview-card').style.display = 'none';
+  document.getElementById('coach-import-text').value = '';
+  window._coachDrafts = null;
+  toast(`${savedCount} new · ${updatedCount} updated`);
+  document.querySelector('nav.tabs button[data-tab="history"]').click();
+});
+
+
+
+// Map a fuzzy day-type heading to one of the canonical 3 day types
+function classifyDayType(heading) {
+  const h = heading.toLowerCase();
+  if (h.includes('monday') || h.includes('volume')) return 'Monday — Volume';
+  if (h.includes('wednesday') || h.includes('weak') || h.includes('paused')) return 'Wednesday — Weak Points';
+  if (h.includes('friday') || h.includes('heavy')) return 'Friday — Heavy';
+  return null;
+}
+
+// Parse a "weight x reps" cell like: "12.5kgx6", "15x3", "13.75 × 7", "12.5kg×7", "—", ""
+function parseSetCell(cell) {
+  if (!cell || cell.trim() === '' || cell.trim() === '—' || cell.trim() === '-') return null;
+  const cleaned = cell.replace(/kg/gi, '').replace(/×/g, 'x').replace(/\s+/g, '').replace('/side', '');
+  const m = cleaned.match(/^(\d+(?:\.\d+)?)x(\d+)/);
+  if (m) return { weight: m[1], reps: m[2], rpe: '' };
+  // Single number? Treat as just a weight (no reps available)
+  const justWeight = cleaned.match(/^(\d+(?:\.\d+)?)$/);
+  if (justWeight) return { weight: justWeight[1], reps: '', rpe: '' };
+  return null;
+}
+
+// Match an exercise name from a freeform table-row label to canonical names
+function matchExerciseName(rawName, dayType) {
+  const r = rawName.toLowerCase().trim();
+  const candidates = DAY_TEMPLATES[dayType] || [];
+  for (const t of candidates) {
+    const t_lower = t.name.toLowerCase();
+    // Direct contains check
+    if (r.includes(t_lower) || t_lower.includes(r)) return t.name;
+    // Word-by-word loose match — e.g. "paused bench" → "Paused Bench (2-sec)"
+    const tokens_t = t_lower.replace(/[()]/g, '').split(/[\s\-—]+/).filter(x => x.length > 2);
+    const tokens_r = r.split(/[\s\-—]+/).filter(x => x.length > 2);
+    const matches = tokens_t.filter(tk => tokens_r.some(rt => rt.includes(tk) || tk.includes(rt)));
+    if (matches.length >= 2 || (tokens_t.length === 1 && matches.length === 1)) return t.name;
+  }
+  // Specific common synonyms
+  if (r.includes('paused')) return candidates.find(c => c.name.includes('Paused'))?.name || rawName.trim();
+  if (r.includes('close-grip') || r.includes('close grip')) return 'Close-Grip Bench';
+  if (r.includes('lat pull')) return 'Lat Pulldown';
+  if (r.includes('chest fly')) return 'DB Chest Fly';
+  if (r.includes('lateral')) return 'DB Lateral Raises';
+  if (r.includes('face pull') || r.includes('rear delt')) return 'Face Pulls';
+  if (r.includes('rope')) return 'Tricep Rope Pushdown';
+  if (r.includes('overhead') && r.includes('tri')) return 'Overhead Tricep Ext';
+  if (r.includes('bicep') || r.includes('curl')) return 'Seated Incline Bicep Curls';
+  if (r.includes('row')) return 'Heavy DB Rows';
+  if (r.includes('incline') && (r.includes('db') || r.includes('dumbbell'))) return 'Incline DB Press';
+  if (r.includes('bench') && !r.includes('close')) return 'Bench Press';
+  return rawName.trim();
+}
+
+// Determine if an exercise is a "primary" lift in this session
+function isPrimary(name, dayType) {
+  const tpl = (DAY_TEMPLATES[dayType] || []).find(t => t.name === name);
+  return tpl?.primary || false;
+}
+function isPerSide(name, dayType) {
+  const tpl = (DAY_TEMPLATES[dayType] || []).find(t => t.name === name);
+  return tpl?.perSide || /bench/i.test(name) && !/incline.*db/i.test(name);
+}
+function repRangeFor(name, dayType) {
+  const tpl = (DAY_TEMPLATES[dayType] || []).find(t => t.name === name);
+  return tpl?.repRange || '';
+}
+
+// Main parser — finds week headings, day headings, tables, comments
+function parseBulkMD(text) {
+  const lines = text.split('\n');
+  const sessions = [];
+  let currentWeek = null;
+  let currentSession = null;
+  let inTable = false;
+  let tableHeaders = [];
+  let pendingNotes = []; // session-level notes captured between tables and next session
+  let pendingPrescription = []; // text captured between day heading and table (often the coach prescription)
+  let captureMode = null; // 'prescription' (between day-heading and table) or null
+
+  function commitSession() {
+    if (currentSession && currentSession.exercises.length) {
+      // Roll up pending notes (everything captured outside tables) into remarks
+      if (pendingNotes.length) {
+        const txt = pendingNotes.join(' ').trim();
+        if (txt) currentSession.remarks = (currentSession.remarks ? currentSession.remarks + ' ' : '') + txt;
+      }
+      if (pendingPrescription.length) {
+        const txt = pendingPrescription.join(' ').trim();
+        if (txt) currentSession.coachSummary = txt;
+      }
+      sessions.push(currentSession);
+    }
+    currentSession = null;
+    pendingNotes = [];
+    pendingPrescription = [];
+    captureMode = null;
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Week heading
+    const weekMatch = trimmed.match(/^#{2,5}\s*WEEK\s+(\d+)/i);
+    if (weekMatch) {
+      commitSession();
+      currentWeek = parseInt(weekMatch[1]);
+      continue;
+    }
+
+    // Day heading
+    const dayMatch = trimmed.match(/^#{2,5}\s*(.+?)$/);
+    if (dayMatch && (trimmed.toLowerCase().includes('monday') || trimmed.toLowerCase().includes('wednesday') ||
+                     trimmed.toLowerCase().includes('friday') || trimmed.toLowerCase().includes('volume') ||
+                     trimmed.toLowerCase().includes('paused') || trimmed.toLowerCase().includes('weak') ||
+                     trimmed.toLowerCase().includes('heavy'))) {
+      commitSession();
+      const dayType = classifyDayType(trimmed);
+      if (!dayType) continue;
+      currentSession = blankSession();
+      currentSession.id = 'sess_imp_' + Date.now() + '_' + sessions.length;
+      currentSession.week = currentWeek || 0;
+      currentSession.dayType = dayType;
+      currentSession.exercises = [];
+      // Detect MISSED markers
+      if (/❌|missed|skipped/i.test(trimmed)) currentSession._missed = true;
+      captureMode = 'prescription';
+      continue;
+    }
+
+    if (!currentSession) continue;
+
+    // Table row
+    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+      const cells = trimmed.split('|').slice(1, -1).map(c => c.trim());
+      // Header row?
+      if (cells[0].toLowerCase() === 'exercise') {
+        tableHeaders = cells;
+        inTable = true;
+        continue;
+      }
+      // Separator row (---|---|...)
+      if (cells.every(c => /^:?-+:?$/.test(c) || c === '')) continue;
+      if (!inTable || tableHeaders.length === 0) continue;
+
+      // Data row
+      const exName = cells[0];
+      if (!exName || exName === '') continue;
+      const targetText = cells[1] || '';
+      const setCells = [];
+      const feelCol = tableHeaders.findIndex(h => /feel/i.test(h));
+      const setColEnd = feelCol > 0 ? feelCol : cells.length;
+      for (let c = 2; c < setColEnd; c++) setCells.push(cells[c]);
+      const feelText = feelCol > 0 ? (cells[feelCol] || '') : '';
+
+      const canonName = matchExerciseName(exName, currentSession.dayType);
+      const sets = setCells.map(parseSetCell).map(s => s || { weight: '', reps: '', rpe: '' });
+
+      // Strip any trailing all-empty sets if more than 3
+      while (sets.length > 3 && !sets[sets.length - 1].weight && !sets[sets.length - 1].reps) sets.pop();
+
+      currentSession.exercises.push({
+        name: canonName,
+        primary: isPrimary(canonName, currentSession.dayType),
+        perSide: isPerSide(canonName, currentSession.dayType),
+        repRange: repRangeFor(canonName, currentSession.dayType),
+        targetText: targetText.replace(/\*/g, '').trim(),
+        rationale: '',
+        sets: sets.length ? sets : [{ weight: '', reps: '', rpe: '' }],
+        comment: feelText.replace(/\*/g, '').trim()
+      });
+      captureMode = null;
+      continue;
+    } else {
+      inTable = false;
+      tableHeaders = [];
+    }
+
+    // Quoted note line (> Session Notes / > How I'm feeling)
+    if (trimmed.startsWith('>')) {
+      const note = trimmed.replace(/^>+\s*/, '').replace(/\*+/g, '').trim();
+      // Skip the placeholder/instructional notes
+      if (/fill in|to be completed|not logged|^how i'm feeling|^session notes/i.test(note)) continue;
+      if (note) pendingNotes.push(note);
+      continue;
+    }
+
+    // Plain prose between day heading and first table → likely the coach prescription paragraph
+    if (captureMode === 'prescription' && trimmed && !trimmed.startsWith('#')) {
+      // Strip leading **Target:** / **Coach note:** / etc
+      const cleaned = trimmed.replace(/^\*+(target|coach note|coach):\*+\s*/i, '').replace(/^\*+/, '').replace(/\*+$/, '').trim();
+      if (cleaned) pendingPrescription.push(cleaned);
+      continue;
+    }
+
+    // Plain prose after table — append to remarks
+    if (trimmed && !trimmed.startsWith('#') && !trimmed.startsWith('---')) {
+      pendingNotes.push(trimmed);
+    }
+  }
+  commitSession();
+
+  // Date inference: we don't have dates in the source MD, so use synthetic dates
+  // anchored on the user's current week — they can edit each session's date in the preview
+  return sessions;
+}
+
+// Render preview UI — shows each parsed session with checkbox + editable summary
+function renderImportPreview(parsed) {
+  const container = document.getElementById('import-preview');
+  if (!parsed.length) {
+    container.innerHTML = '<div class="empty-state">Nothing parsed. Make sure week headings (####) and day headings (#####) are present.</div>';
+    return;
+  }
+  window._parsedSessions = parsed;
+  container.innerHTML = parsed.map((s, idx) => {
+    const exCount = s.exercises.length;
+    const setCount = s.exercises.reduce((sum, ex) => sum + ex.sets.filter(set => set.weight || set.reps).length, 0);
+    const exList = s.exercises.map(ex => {
+      const sets = ex.sets.filter(set => set.weight || set.reps).map(set => `${set.weight}×${set.reps}`).join(' · ');
+      return `<div style="font-size:13px; padding:2px 0;"><strong>${escapeHtml(ex.name)}</strong>: ${sets || '<em>no sets parsed</em>'}${ex.comment ? ` <span style="color:var(--ink-muted); font-style:italic;">— ${escapeHtml(ex.comment.slice(0, 80))}${ex.comment.length > 80 ? '…' : ''}</span>` : ''}</div>`;
+    }).join('');
+    return `
+      <div class="exercise-block" style="margin-bottom: 14px;">
+        <div style="display:flex; align-items:flex-start; gap:10px;">
+          <input type="checkbox" data-imp-check="${idx}" checked style="margin-top: 4px;">
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px; flex-wrap:wrap;">
+              <strong>Week ${s.week}</strong>
+              <span class="pill accent">${s.dayType}</span>
+              <input type="date" data-imp-date="${idx}" value="${s.date}" style="width:auto; min-width:140px;">
+              ${s._missed ? '<span class="pill warn">MISSED</span>' : ''}
+            </div>
+            <div style="margin: 6px 0;">${exList}</div>
+            ${s.coachSummary ? `<div style="font-size:12px; color:var(--ink-muted); font-style:italic; margin-top:6px;"><strong>Prescription:</strong> ${escapeHtml(s.coachSummary.slice(0, 200))}${s.coachSummary.length > 200 ? '…' : ''}</div>` : ''}
+            ${s.remarks ? `<div style="font-size:12px; color:var(--ink-muted); margin-top:6px;"><strong>Remarks:</strong> ${escapeHtml(s.remarks.slice(0, 200))}${s.remarks.length > 200 ? '…' : ''}</div>` : ''}
+            <div style="font-size:11px; color:var(--ink-faint); margin-top:6px;">${exCount} exercises · ${setCount} sets</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+document.getElementById('import-parse').addEventListener('click', () => {
+  const text = document.getElementById('import-md-text').value;
+  if (!text.trim()) { toast('Paste some MD first'); return; }
+  const parsed = parseBulkMD(text);
+  // Assign synthetic dates: anchor on Monday of (Week N), spread Mon/Wed/Fri
+  // We use 2026-04-06 as W1 Monday (consistent with the user's actual program start)
+  const W1_MON = new Date('2026-04-06T00:00:00');
+  const dayOffset = { 'Monday — Volume': 0, 'Wednesday — Weak Points': 2, 'Friday — Heavy': 4 };
+  parsed.forEach(s => {
+    const baseDays = ((s.week || 1) - 1) * 7 + (dayOffset[s.dayType] ?? 0);
+    const d = new Date(W1_MON.getTime() + baseDays * 86400000);
+    s.date = d.toISOString().slice(0, 10);
+  });
+  renderImportPreview(parsed);
+  document.getElementById('import-preview-card').style.display = 'block';
+  document.getElementById('import-preview-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toast(`Parsed ${parsed.length} sessions`);
+});
+
+document.getElementById('import-clear').addEventListener('click', () => {
+  document.getElementById('import-md-text').value = '';
+  document.getElementById('import-preview-card').style.display = 'none';
+  document.getElementById('import-preview').innerHTML = '';
+  window._parsedSessions = null;
+});
+
+document.getElementById('import-cancel').addEventListener('click', () => {
+  document.getElementById('import-preview-card').style.display = 'none';
+});
+
+document.getElementById('import-commit').addEventListener('click', () => {
+  if (!window._parsedSessions) return;
+  // Apply any date edits from the preview
+  document.querySelectorAll('[data-imp-date]').forEach(el => {
+    const idx = +el.dataset.impDate;
+    if (window._parsedSessions[idx]) window._parsedSessions[idx].date = el.value;
+  });
+  let saved = 0;
+  document.querySelectorAll('[data-imp-check]').forEach(el => {
+    if (!el.checked) return;
+    const idx = +el.dataset.impCheck;
+    const s = window._parsedSessions[idx];
+    if (!s) return;
+    s.savedAt = new Date().toISOString();
+    delete s._missed;
+    state.sessions.push(JSON.parse(JSON.stringify(s)));
+    saved++;
+  });
+  saveState();
+  toast(`Imported ${saved} sessions`);
+  document.getElementById('import-preview-card').style.display = 'none';
+  document.getElementById('import-md-text').value = '';
+  window._parsedSessions = null;
+  // Switch to history so user can verify
+  document.querySelector('nav.tabs button[data-tab="history"]').click();
+});
+
+
+document.getElementById('export-json').addEventListener('click', () => {
+  state.lastBackupAt = new Date().toISOString();
+  saveState();
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bench_ledger_backup_${todayISO()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup downloaded');
+  updateLastBackupInfo();
+});
+
+function updateLastBackupInfo() {
+  const el = document.getElementById('last-backup-info');
+  if (!el) return;
+  if (!state.lastBackupAt) {
+    el.innerHTML = '<span style="color: var(--danger);">⚠️ No backup taken yet.</span> Export one before adding more data.';
+    return;
+  }
+  const last = new Date(state.lastBackupAt);
+  const days = Math.floor((Date.now() - last.getTime()) / 86400000);
+  const dateStr = last.toISOString().slice(0, 10);
+  let warning = '';
+  if (days >= 7) warning = ` <span style="color: var(--warn);">— consider exporting a fresh backup.</span>`;
+  if (days >= 21) warning = ` <span style="color: var(--danger);">— it has been ${days} days, please export a fresh backup.</span>`;
+  el.innerHTML = `Last backup: <strong>${dateStr}</strong> (${days} day${days === 1 ? '' : 's'} ago)${warning}`;
+}
+
+document.getElementById('import-json-file').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  if (!confirm('Importing will REPLACE all current data. Continue?')) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      state = { ...structuredClone(DEFAULT_STATE), ...imported };
+      saveState();
+      hydrateAll();
+      toast('Imported');
+    } catch (err) { toast('Import failed: invalid JSON'); }
+  };
+  reader.readAsText(f);
+});
+
+document.getElementById('clear-all').addEventListener('click', () => {
+  if (!confirm('Wipe ALL data? This cannot be undone (export a backup first).')) return;
+  if (!confirm('Really sure? Last chance.')) return;
+  state = structuredClone(DEFAULT_STATE);
+  saveState();
+  hydrateAll();
+  toast('All data cleared');
+});
+
+// Profile fields
+['age', 'height', 'goal', 'weeks'].forEach(k => {
+  const id = 'prof-' + k;
+  document.getElementById(id).addEventListener('input', e => {
+    const key = k === 'goal' ? 'goalKg' : k;
+    state.profile[key] = +e.target.value || 0;
+    saveState();
+  });
+});
+document.getElementById('prof-notes').addEventListener('input', e => {
+  state.profile.notes = e.target.value;
+  saveState();
+});
+
+// ============================================================================
+// INITIAL HYDRATION
+// ============================================================================
+function hydrateAll() {
+  hydrateTodayPane();
+  // profile fields
+  document.getElementById('prof-age').value = state.profile.age || 28;
+  document.getElementById('prof-height').value = state.profile.height || 173;
+  document.getElementById('prof-goal').value = state.profile.goalKg || 80;
+  document.getElementById('prof-weeks').value = state.profile.weeks || 16;
+  document.getElementById('prof-notes').value = state.profile.notes || '';
+  // hevy status
+  if (state.hevyData) {
+    document.getElementById('csv-status').innerHTML =
+      `<span class="pill good">Loaded</span> ${state.hevyData.sessionCount} sessions cached. Re-upload to refresh.`;
+  }
+  // bw date default
+  document.getElementById('bw-date').value = todayISO();
+  document.getElementById('bw-week').value = state.currentSession?.week || 4;
+}
+
+bindTopFields();
+hydrateAll();
+</script>
+</body>
+</html>
