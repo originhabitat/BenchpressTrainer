@@ -1034,6 +1034,17 @@
     <!-- SUB-PANE: DATA & PROFILE -->
     <div class="sub-pane" id="sub-pane-datastore">
       <section class="card">
+        <h2>Backup &amp; restore</h2>
+        <p class="hint">Export a JSON backup periodically — at minimum after each completed week. Importing wipes existing data and replaces it with the backup's contents.</p>
+        <div class="toolbar">
+          <button class="btn" id="export-json">Export JSON backup</button>
+          <label for="import-json-file" id="import-json-file-label" class="btn ghost" style="cursor:pointer;display:inline-block;">Import JSON backup</label>
+          <input type="file" id="import-json-file" accept=".json" style="display:none;">
+          <button class="btn danger" id="clear-all">Clear all data</button>
+        </div>
+      </section>
+
+      <section class="card">
         <h2>About your data</h2>
         <p style="font-size: 14px; line-height: 1.6;">
           Everything you log lives in <strong>this browser only</strong> (using <code>localStorage</code>). No server, no account, no upload.
@@ -1046,17 +1057,6 @@
           <li><strong>Saving is automatic</strong> as you type — there is nothing to "upload" when you leave the page.</li>
         </ul>
         <p id="last-backup-info" class="hint" style="margin-top: 12px;"></p>
-      </section>
-
-      <section class="card">
-        <h2>Backup &amp; restore</h2>
-        <p class="hint">Export a JSON backup periodically — at minimum after each completed week. The import wipes existing data and replaces it.</p>
-        <div class="toolbar">
-          <button class="btn" id="export-json">Export JSON backup</button>
-          <label for="import-json-file" class="btn ghost" style="cursor:pointer;display:inline-block;">Import JSON backup</label>
-          <input type="file" id="import-json-file" accept=".json" style="display:none;">
-          <button class="btn danger" id="clear-all">Clear all data</button>
-        </div>
       </section>
 
       <section class="card">
@@ -1877,7 +1877,24 @@ const Calendar = (function() {
 function renderHistory() {
   const container = document.getElementById('history-list');
   if (!state.sessions.length) {
-    container.innerHTML = '<div class="empty-state">No saved sessions yet. Log today\'s session and tap "Save".</div>';
+    container.innerHTML = `
+      <div class="empty-state">
+        No saved sessions yet. Log today's session and tap "Save" — or, if you have a backup file from before, import it instead of starting over.
+        <div style="margin-top: 12px;">
+          <button class="btn ghost small" id="history-jump-to-import">Import JSON backup</button>
+        </div>
+      </div>`;
+    const jumpBtn = document.getElementById('history-jump-to-import');
+    if (jumpBtn) jumpBtn.addEventListener('click', () => {
+      document.querySelector('nav.tabs button[data-tab="tools"]').click();
+      // tools click handler runs first; then move to the Data & Profile sub-tab
+      requestAnimationFrame(() => {
+        document.querySelector('.sub-tab[data-sub="datastore"]')?.click();
+        requestAnimationFrame(() => {
+          document.getElementById('import-json-file-label')?.scrollIntoView({ block: 'center' });
+        });
+      });
+    });
     return;
   }
   const sorted = [...state.sessions].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
