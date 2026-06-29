@@ -2165,17 +2165,19 @@ function generateMD() {
   md += `- **Read RPE, reps, and feel notes together.** Weight × reps alone is incomplete data — a "Hard" set at top of range is different from an "Easy" one at bottom.\n`;
   md += `- **Exceeded rep target = positive progression signal.** If prescribed 10 reps and the athlete did 12 with good form (RPE ≤ 8), that is **strength gained**, not deviation. Treat as readiness for the next increment, not a reason to repeat. *(A previous version of this prompt got this wrong — don't repeat that mistake.)*\n`;
   md += `- **Under-target with high RPE ≠ failure.** A 6/10 with RPE 9 after pickleball + poor sleep is different from the same numbers well-rested. Read context before judging.\n`;
+  md += `- **Athlete-initiated exercise substitutions:** if the athlete swaps a prescribed accessory for something else mid-session (machine variant, single-arm version, different lift entirely) and says why, treat their stated reason as valid for that session. For the next prescription, default back to the originally prescribed exercise unless the athlete's reasoning suggests a durable change (recurring pain, consistent preference) — in which case say so explicitly and ask whether to make the swap permanent rather than silently carrying it forward.\n`;
   md += `- **Hold weight when:** form breaks, rep drop-off > 30% across sets, new joint issues, or RPE consistently 9–10 at prescribed weight.\n`;
   md += `- **Add weight when:** target rep range hit cleanly across all sets with RPE ≤ 8, OR top of range exceeded on at least set 1, OR athlete's own report indicates clear headroom.\n`;
   md += `- **Matrix is a guide, not a leash.** Bench progression should stay broadly aligned with §4 to hit the W16 test cleanly; accessory progression can move faster.\n`;
-  md += `- **1-rep-shy-of-failure rule is non-negotiable.** Athlete is rebuilding from layoff.\n\n`;
+  md += `- **Separate equipment/logging errors from true performance data.** If a set's numbers are off because of a loading mistake, mis-set pin, wrong unit entry, etc. (the athlete's comment will usually say so), do not treat that set as a true readiness signal in either direction. Judge progression on the corrected/clean sets, and call out in the debrief that the flagged set was excluded and why.\n`;
+  md += `- **1-rep-shy-of-failure rule is non-negotiable.** Athlete is rebuilding from layoff. Treat RPE ≥9.5 as having crossed that line — it is at or past failure, not "1 shy." If a logged set already hit 9.5+, don't re-litigate it after the fact; just don't prescribe back into that zone, and flag it once if it's become a repeating pattern worth the athlete's attention.\n\n`;
   if (p.notes && p.notes.trim()) {
     md += `**Standing notes for this athlete:**\n\n`;
     p.notes.trim().split('\n').filter(l => l.trim()).forEach(l => md += `- ${l.trim()}\n`);
     md += `\n`;
   }
   md += `**Required response structure (every time):**\n\n`;
-  md += `1. **Session-by-session debrief** of what was just logged. Each session in §6 includes the *prior prescription summary* (your own reasoning when you prescribed this session) — read it, then evaluate how the actual performance lined up with what you predicted. If you said "set 4 ceiling clean = ready for jump" and they hit it, name that. If you flagged something and they fixed it, name that too. Honest read; praise real progress, flag real issues.\n`;
+  md += `1. **Session-by-session debrief** of what was just logged. Each session in §6 includes the *prior prescription summary* (your own reasoning when you prescribed this session) — read it, then evaluate how the actual performance lined up with what you predicted. If you said "set 4 ceiling clean = ready for jump" and they hit it, name that. If you flagged something and they fixed it, name that too. Honest read; praise real progress, flag real issues. **If any session comment contains a direct question from the athlete, answer it explicitly here before moving on — don't let it pass unaddressed.**\n`;
   md += `2. **Next 3 sessions prescribed** using the **exact format below** (the athlete's logger parses it automatically — deviating breaks the import):\n\n`;
   md += `   For each session, use this exact heading style:\n`;
   md += `   \`### Tuesday — Volume\`, \`### Thursday — Weak Points\`, or \`### Saturday — Heavy\`\n\n`;
@@ -2185,7 +2187,7 @@ function generateMD() {
   md += `   Then a pipe-delimited exercise table with exactly these columns:\n`;
   md += `   \`| Exercise | Target | Rationale |\n|---|---|---|\n| Bench Press | 4×6–8 @ 15.0 kg/side | Matrix W5, clear headroom from W4 set 4 |\`\n\n`;
   md += `   Target format: \`{sets}×{reps} @ {weight} kg/side\` for per-side lifts, \`{sets}×{reps} @ {weight} kg\` for accessories. Rationale: one line.\n\n`;
-  md += `3. **Trend watch** — anything building across weeks (strength curve, recovery, imbalance, body weight, missed sessions).\n`;
+  md += `3. **Trend watch** — anything building across weeks (strength curve, recovery, imbalance, body weight, missed sessions). If body weight hasn't been logged (§2/§5 shows "—"), say it hasn't been tracked yet rather than commenting on a trend that isn't there.\n`;
   md += `4. **One actionable cue** — single technique or habit focus for the next training block. No fluff.\n\n`;
   md += `**Tone:** Direct, knowledgeable, motivating. The athlete has full context — don't ask them to re-explain.\n\n---\n\n`;
 
