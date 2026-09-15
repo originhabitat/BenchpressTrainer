@@ -1,2629 +1,380 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f2f5f3">
-<title>Upper Body · Pull-Up · Ski Ledger</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Training Coach · Hevy Ledger</title>
 <style>
-  /* ============================================================
-     DESIGN TOKENS
-     Cool slate base · steel blue accent · forest green progress
-  ============================================================ */
-  :root {
-    --ink:          #181f1b;
-    --ink-muted:    #4a5c51;
-    --ink-faint:    #8fa898;
-    --paper:        #f2f5f3;
-    --paper-2:      #e5ebe7;
-    --paper-3:      #d4ddd7;
-    --paper-card:   #fafcfb;
-    --accent:       #1e5c8a;
-    --accent-hover: #164d75;
-    --accent-soft:  #d0e4f2;
-    --good:         #1f6340;
-    --good-soft:    #cde5d9;
-    --warn:         #7a5c10;
-    --warn-soft:    #f0e3bf;
-    --danger:       #7a2020;
-    --danger-soft:  #f0d4d4;
-    --rule:         #bfcdc5;
-    --rule-light:   #dce6e0;
-
-    --radius:       4px;
-    --radius-sm:    2px;
-    --shadow-card:  0 1px 3px rgba(0,0,0,.06), 0 0 0 1px var(--rule);
-  }
-
-  /* ============================================================
-     RESET & BASE
-  ============================================================ */
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino,
-                 'URW Palladio L', 'Book Antiqua', Georgia, serif;
-    font-size: 16px;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-  }
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 20px 16px 100px;
-  }
-
-  /* ============================================================
-     HEADER
-  ============================================================ */
-  header {
-    border-bottom: 2px solid var(--ink);
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-  }
-  .masthead {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .title-block h1 {
-    font-size: 24px;
-    font-weight: 800;
-    margin: 0;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-  }
-  .title-block .sub {
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--ink-muted);
-    margin-top: 5px;
-  }
-  .meta-block {
-    font-size: 12px;
-    color: var(--ink-muted);
-    text-align: right;
-    line-height: 1.6;
-  }
-  .meta-block strong { color: var(--ink); font-weight: 700; }
-
-  /* ============================================================
-     TABS
-  ============================================================ */
-  nav.tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--rule);
-    margin-bottom: 20px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: var(--paper);
-  }
-  nav.tabs::-webkit-scrollbar { display: none; }
-  nav.tabs button {
-    background: none;
-    border: none;
-    padding: 9px 13px;
-    font-family: inherit;
-    font-size: 12.5px;
-    color: var(--ink-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    letter-spacing: 0.02em;
-    transition: color 0.12s, border-color 0.12s;
-    position: relative;
-  }
-  nav.tabs button:hover { color: var(--ink); }
-  nav.tabs button.active {
-    color: var(--ink);
-    border-bottom-color: var(--accent);
-    font-weight: 700;
-  }
-  nav.tabs button[data-tab="bodyweight"]::before,
-  nav.tabs button[data-tab="history"]::before,
-  nav.tabs button[data-tab="bench"]::before,
-  nav.tabs button[data-tab="coach"]::before,
-  nav.tabs button[data-tab="tools"]::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 25%; bottom: 25%;
-    width: 1px;
-    background: var(--rule-light);
-  }
-
-  .pane { display: none; }
-  .pane.active { display: block; }
-
-  /* ============================================================
-     SUB-TABS
-  ============================================================ */
-  nav.sub-tabs {
-    display: flex;
-    gap: 0;
-    margin-bottom: 16px;
-    background: var(--paper-2);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
-    padding: 3px;
-  }
-  .sub-tab {
-    flex: 1;
-    background: none;
-    border: none;
-    padding: 8px 10px;
-    font-family: inherit;
-    font-size: 12.5px;
-    color: var(--ink-muted);
-    cursor: pointer;
-    border-radius: calc(var(--radius) - 2px);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    transition: background 0.12s, color 0.12s;
-    white-space: nowrap;
-  }
-  .sub-tab:hover { color: var(--ink); }
-  .sub-tab.active {
-    background: var(--paper-card);
-    color: var(--ink);
-    box-shadow: 0 1px 3px rgba(0,0,0,.08);
-  }
-  .sub-pane { display: none; }
-  .sub-pane.active { display: block; }
-
-  /* ============================================================
-     CARDS
-  ============================================================ */
-  section.card {
-    background: var(--paper-card);
-    box-shadow: var(--shadow-card);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    margin-bottom: 16px;
-  }
-  section.card h2 {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--ink-faint);
-    margin: 0 0 12px;
-    font-weight: 700;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--rule-light);
-  }
-  section.card h3 {
-    font-size: 15px;
-    margin: 14px 0 8px;
-    font-weight: 600;
-  }
-  section.card.primary {
-    border-left: 3px solid var(--accent);
-  }
-
-  details.card { padding: 0; }
-  details.card > summary {
-    list-style: none;
-    cursor: pointer;
-    padding: 16px 18px;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--ink-faint);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    user-select: none;
-  }
-  details.card > summary::-webkit-details-marker { display: none; }
-  details.card > summary::after {
-    content: '▸';
-    font-size: 13px;
-    letter-spacing: 0;
-    transition: transform 0.15s;
-    color: var(--ink-muted);
-  }
-  details.card[open] > summary {
-    border-bottom: 1px solid var(--rule-light);
-    color: var(--ink-muted);
-  }
-  details.card[open] > summary::after { transform: rotate(90deg); }
-  details.card > summary .summary-meta {
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    text-transform: none;
-    color: var(--ink-faint);
-    font-weight: 400;
-    font-style: italic;
-    margin-left: auto;
-    margin-right: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 55%;
-  }
-  details.card .card-body { padding: 14px 18px 16px; }
-  .hint {
-    font-size: 12px;
-    color: var(--ink-muted);
-    font-style: italic;
-    margin: 0 0 10px;
-    line-height: 1.5;
-  }
-
-  /* ============================================================
-     FORM ELEMENTS
-  ============================================================ */
-  label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--ink-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    margin: 10px 0 4px;
-  }
-  label:first-child { margin-top: 0; }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  textarea,
-  select {
-    width: 100%;
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-sm);
-    padding: 8px 11px;
-    font-family: inherit;
-    font-size: 15px;
-    color: var(--ink);
-    transition: border-color 0.12s, background 0.12s;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5c51'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 28px;
-  }
-  input:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: var(--accent);
-    background: #fff;
-    box-shadow: 0 0 0 2px var(--accent-soft);
-  }
-  textarea {
-    resize: vertical;
-    min-height: 64px;
-    line-height: 1.55;
-  }
-
-  .row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
-  .row > * { flex: 1; min-width: 0; }
-  .row .narrow { flex: 0 0 90px; }
-  .row .micro  { flex: 0 0 70px; }
-
-  /* ============================================================
-     BUTTONS
-  ============================================================ */
-  button.btn {
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    padding: 10px 18px;
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: background 0.12s, opacity 0.12s;
-    white-space: nowrap;
-  }
-  button.btn:hover  { background: #000; }
-  button.btn:active { opacity: 0.85; }
-  button.btn.ghost {
-    background: transparent;
-    color: var(--ink);
-    border: 1.5px solid var(--rule);
-  }
-  button.btn.ghost:hover { border-color: var(--ink); background: var(--paper-2); }
-  button.btn.accent { background: var(--accent); }
-  button.btn.accent:hover { background: var(--accent-hover); }
-  button.btn.good { background: var(--good); }
-  button.btn.good:hover { background: #174d30; }
-  button.btn.danger { background: var(--danger); }
-  button.btn.danger:hover { background: #6e2020; }
-  button.btn.small  { padding: 6px 11px; font-size: 11px; }
-
-  button.icon-btn {
-    background: none;
-    border: 1px solid var(--rule);
-    width: 30px; height: 30px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    color: var(--ink-muted);
-    font-size: 16px;
-    line-height: 1;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.1s, color 0.1s;
-  }
-  button.icon-btn:hover { background: var(--paper-2); color: var(--ink); border-color: var(--ink-muted); }
-
-  .toolbar {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 4px;
-    margin-bottom: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--rule-light);
-  }
-  section.card .toolbar { border-top: none; padding-top: 0; margin-bottom: 0; }
-
-  /* ============================================================
-     CHECKBOXES
-  ============================================================ */
-  .check-row {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 6px 0;
-  }
-  .check-row label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    text-transform: none;
-    letter-spacing: 0;
-    font-weight: 400;
-    font-size: 14px;
-    color: var(--ink);
-    margin: 0;
-    cursor: pointer;
-    background: var(--paper-2);
-    border: 1px solid var(--rule);
-    border-radius: 20px;
-    padding: 5px 11px 5px 8px;
-    transition: background 0.1s, border-color 0.1s;
-  }
-  .check-row label:has(input:checked) {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .check-row input[type="checkbox"] { margin: 0; accent-color: var(--accent); }
-
-  /* ============================================================
-     SESSION SETS TABLE (reps-focused, no weight per-side framing)
-  ============================================================ */
-  .session-set-block {
-    border: 1px solid var(--rule-light);
-    border-radius: var(--radius);
-    padding: 14px;
-    margin-bottom: 12px;
-    background: var(--paper);
-    transition: border-color 0.15s;
-  }
-  .session-set-block.has-data {
-    background: var(--paper-card);
-    border-color: var(--rule);
-    box-shadow: 0 1px 2px rgba(0,0,0,.04);
-  }
-  .set-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--rule-light);
-  }
-  .set-name {
-    font-weight: 700;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  table.sets {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 8px 0 4px;
-    font-size: 14px;
-  }
-  table.sets th {
-    text-align: left;
-    font-size: 10px;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    padding: 4px 6px 6px;
-    border-bottom: 1px solid var(--rule-light);
-  }
-  table.sets td { padding: 3px 4px; }
-  table.sets td input { padding: 7px 8px; font-size: 14px; }
-  table.sets td.set-num {
-    color: var(--ink-faint);
-    font-size: 11px;
-    font-weight: 700;
-    width: 24px;
-    text-align: center;
-    letter-spacing: 0.05em;
-  }
-  table.sets tbody tr:hover { background: var(--paper-2); }
-
-  /* ============================================================
-     PHASE MATRIX TABLE
-  ============================================================ */
-  table.matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.matrix th, table.matrix td {
-    padding: 7px 9px;
-    text-align: left;
-    border-bottom: 1px solid var(--rule-light);
-  }
-  table.matrix th {
-    background: var(--paper-2);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--ink-muted);
-    font-weight: 700;
-  }
-  table.matrix tr.current { background: var(--accent-soft); }
-  table.matrix tr.current td { font-weight: 700; color: var(--accent); }
-  table.matrix tr.deload td { color: var(--warn); }
-  table.matrix tr.milestone td { color: var(--good); font-weight: 600; }
-
-  /* ============================================================
-     EXERCISE BLOCKS (structured per-exercise sets)
-  ============================================================ */
-  .exercise-block {
-    border: 1px solid var(--rule-light);
-    border-radius: var(--radius);
-    padding: 13px 14px;
-    margin-bottom: 12px;
-    background: var(--paper);
-    transition: border-color 0.15s;
-  }
-  .exercise-block.has-data {
-    background: var(--paper-card);
-    border-color: var(--rule);
-    box-shadow: 0 1px 2px rgba(0,0,0,.04);
-  }
-  .ex-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--rule-light);
-    flex-wrap: wrap;
-  }
-  .ex-name-block { flex: 1; min-width: 0; }
-  .ex-name {
-    font-weight: 700;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-wrap: wrap;
-  }
-  .ex-prescription {
-    font-size: 12px;
-    color: var(--ink-muted);
-    font-style: italic;
-    margin-top: 3px;
-  }
-  .ex-block-label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--ink-faint);
-    background: var(--paper-2);
-    border: 1px solid var(--rule-light);
-    border-radius: var(--radius-sm);
-    padding: 2px 7px;
-    white-space: nowrap;
-  }
-
-  /* ============================================================
-     BENCH TAB STYLES
-  ============================================================ */
-  .bench-stat {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-  .bench-stat .val {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-  }
-  .bench-stat .unit {
-    font-size: 13px;
-    color: var(--ink-muted);
-  }
-  .bench-stat .goal-gap {
-    font-size: 12px;
-    color: var(--warn);
-    font-weight: 600;
-  }
-
-  /* ============================================================
-     BODYWEIGHT LOG
-  ============================================================ */
-  .bw-log-entry {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--rule-light);
-    font-size: 14px;
-  }
-  .bw-log-entry:last-child { border-bottom: none; }
-  .bw-log-entry .phase-label { font-size: 11px; color: var(--ink-faint); width: 52px; font-weight: 700; letter-spacing: 0.05em; }
-  .bw-log-entry .date { font-size: 12px; color: var(--ink-muted); width: 84px; }
-  .bw-log-entry .kg   { font-weight: 700; width: 58px; }
-  .bw-log-entry .reps { font-weight: 700; width: 58px; color: var(--good); }
-  .bw-log-entry .delta { font-size: 12px; }
-  .delta.up   { color: var(--good); }
-  .delta.down { color: var(--danger); }
-  .delta.flat { color: var(--ink-faint); }
-
-  /* ============================================================
-     PROGRESS BAR (rep milestones)
-  ============================================================ */
-  .progress-track {
-    margin: 12px 0 8px;
-  }
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--ink-muted);
-    margin-bottom: 5px;
-  }
-  .progress-bar-bg {
-    background: var(--paper-3);
-    border-radius: 100px;
-    height: 8px;
-    overflow: hidden;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--good), var(--accent));
-    border-radius: 100px;
-    transition: width 0.4s ease;
-  }
-  .milestone-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-  }
-  .milestone-pip {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    font-size: 10px;
-    color: var(--ink-faint);
-    text-align: center;
-  }
-  .milestone-pip .pip {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--paper-3);
-    border: 2px solid var(--rule);
-  }
-  .milestone-pip.reached .pip {
-    background: var(--good);
-    border-color: var(--good);
-  }
-  .milestone-pip.reached { color: var(--good); font-weight: 700; }
-
-  /* ============================================================
-     EXPORT OUTPUT
-  ============================================================ */
-  .output-area {
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    padding: 14px;
-    font-family: 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
-    font-size: 11.5px;
-    max-height: 52vh;
-    overflow: auto;
-    white-space: pre-wrap;
-    border-radius: var(--radius-sm);
-    line-height: 1.6;
-    color: var(--ink-muted);
-  }
-
-  /* ============================================================
-     PILLS / BADGES
-  ============================================================ */
-  .pill {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 100px;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 700;
-    vertical-align: middle;
-  }
-  .pill.good   { background: var(--good-soft);   color: var(--good); }
-  .pill.warn   { background: var(--warn-soft);   color: var(--warn); }
-  .pill.accent { background: var(--accent-soft); color: var(--accent); }
-  .pill.danger { background: var(--danger-soft); color: var(--danger); }
-  .pill.phase1 { background: #dce6f5; color: #1a4a7a; }
-  .pill.phase2 { background: #d5e8dd; color: #1a5c38; }
-  .pill.phase3 { background: #f0e3bf; color: #7a5c10; }
-  .pill.phase4 { background: #f0d4d4; color: #7a2020; }
-
-  /* ============================================================
-     HISTORY LIST
-  ============================================================ */
-  .history-item {
-    background: var(--paper);
-    border: 1px solid var(--rule-light);
-    padding: 11px 14px;
-    margin-bottom: 8px;
-    border-radius: var(--radius);
-    font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    transition: border-color 0.1s;
-  }
-  .history-item:hover { border-color: var(--rule); }
-  .history-item .date  { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
-  .history-item .focus { font-weight: 700; }
-
-  /* ============================================================
-     CALENDAR
-  ============================================================ */
-  .cal-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .cal-nav span {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-  }
-  .cal-grid .cal-dow {
-    text-align: center;
-    font-size: 9.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--ink-faint);
-    padding: 0 0 8px;
-    font-weight: 700;
-  }
-  .cal-cell {
-    min-height: 40px;
-    border-radius: var(--radius-sm);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 4px 2px 3px;
-    cursor: default;
-    transition: background 0.1s;
-  }
-  .cal-cell.has-session { cursor: pointer; }
-  .cal-cell.has-session:hover { background: var(--paper-2); }
-  .cal-cell.other-month  { opacity: 0.3; }
-  .cal-cell.today-cell   { background: var(--paper-2); border-radius: var(--radius-sm); }
-  .cal-cell .cal-num {
-    font-size: 11px;
-    color: var(--ink-muted);
-    line-height: 1;
-    width: 100%;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-  .cal-cell.has-session .cal-num { color: var(--ink); font-weight: 700; }
-  .cal-cell.active-cell  { background: var(--accent-soft); }
-  .cal-cell.active-cell .cal-num { color: var(--accent); font-weight: 700; }
-  .cal-dot-row {
-    display: flex;
-    gap: 2px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 4px;
-  }
-  .cal-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .cal-dot.gtg    { background: var(--accent); }
-  .cal-dot.gym    { background: var(--good); }
-  .cal-dot.ladder { background: var(--warn); }
-  .cal-dot.peak   { background: var(--danger); }
-  .cal-dot.missed { background: var(--ink-faint); }
-  .cal-expanded-card {
-    grid-column: 1 / -1;
-    background: var(--paper-2);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    font-size: 13px;
-    line-height: 1.6;
-    margin: 4px 0 2px;
-  }
-  .cal-expanded-card .cal-exp-row {
-    padding: 6px 0;
-    border-top: 1px solid var(--rule-light);
-    font-size: 12.5px;
-  }
-  .cal-expanded-card .cal-exp-row:first-child { border-top: none; padding-top: 0; }
-
-  /* ============================================================
-     MISC
-  ============================================================ */
-  .empty-state {
-    text-align: center;
-    padding: 32px 16px;
-    color: var(--ink-faint);
-    font-style: italic;
-    font-size: 14px;
-  }
-  .file-input-wrapper {
-    border: 2px dashed var(--rule);
-    padding: 20px;
-    text-align: center;
-    border-radius: var(--radius);
-    background: var(--paper);
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .file-input-wrapper input[type="file"] { display: none; }
-
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--ink);
-    color: var(--paper);
-    padding: 10px 20px;
-    border-radius: 100px;
-    font-size: 13.5px;
-    font-weight: 600;
-    z-index: 100;
-    opacity: 0;
-    transition: opacity 0.18s, transform 0.18s;
-    pointer-events: none;
-    white-space: nowrap;
-    box-shadow: 0 4px 16px rgba(0,0,0,.2);
-  }
-  .toast.show { opacity: 1; }
-
-  .edit-banner {
-    background: var(--accent-soft);
-    border: 1px solid var(--accent);
-    border-left: 3px solid var(--accent);
-    padding: 10px 14px;
-    border-radius: var(--radius);
-    margin-bottom: 16px;
-    font-size: 13.5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  /* injury flag card */
-  .injury-flag {
-    border-left: 3px solid var(--danger);
-    background: var(--danger-soft);
-    padding: 10px 14px;
-    border-radius: var(--radius);
-    margin-bottom: 16px;
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  /* ============================================================
-     MOBILE
-  ============================================================ */
-  @media (max-width: 520px) {
-    .container { padding: 12px 12px 100px; }
-    .title-block h1 { font-size: 20px; }
-    .meta-block { text-align: left; width: 100%; font-size: 11px; }
-    .row .narrow { flex: 1; }
-    nav.tabs button { padding: 8px 10px; font-size: 11.5px; }
-    table.sets th, table.sets td { padding: 3px 2px; }
-    table.sets td input { padding: 6px 4px; font-size: 13px; }
-    section.card { padding: 13px 14px; }
-    .cal-cell { min-height: 38px; }
-  }
+:root{--bg:#f3f1eb;--paper:#fffdf8;--ink:#1c1d1b;--muted:#6f716d;--rule:#d8d5cc;--accent:#275c50;--accent2:#dce9e4;--warn:#9a4d32;--good:#346b45;--shadow:0 8px 24px rgba(30,30,25,.06)}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:var(--paper);border-bottom:1px solid var(--rule);padding:22px max(20px,calc((100vw - 1180px)/2))}
+h1{font:700 30px/1.05 Georgia,serif;margin:0 0 5px}.sub{color:var(--muted)} .wrap{max-width:1180px;margin:auto;padding:18px}
+.tabs{display:flex;gap:4px;overflow:auto;background:var(--paper);border-bottom:1px solid var(--rule);padding:0 max(20px,calc((100vw - 1180px)/2))}
+.tabs button{border:0;background:transparent;padding:13px 15px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}.tabs button.active{color:var(--accent);border-bottom:3px solid var(--accent)}
+.pane{display:none}.pane.active{display:block}.card{background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font:700 20px Georgia,serif;margin:0 0 8px}.hint,.muted{color:var(--muted)}.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:170px}.narrow{max-width:170px}
+label{display:block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 5px}
+input,select,textarea{width:100%;border:1px solid var(--rule);border-radius:8px;padding:10px;background:white;color:var(--ink);font:inherit}textarea{resize:vertical}
+.btn{border:1px solid var(--rule);background:white;border-radius:8px;padding:9px 13px;font-weight:750;cursor:pointer}.btn.accent{background:var(--accent);border-color:var(--accent);color:white}.btn.good{color:var(--good);border-color:#9fc5aa}.btn.warn{color:var(--warn);border-color:#d7aa9b}.btn.small{padding:6px 9px;font-size:12px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.exercise{border:1px solid var(--rule);border-radius:10px;margin:10px 0;overflow:hidden}.ex-head{display:flex;justify-content:space-between;gap:10px;padding:12px 14px;background:#f7f6f1}.ex-name{font-weight:850}.target{color:var(--accent);font-weight:750;font-size:13px}.ex-body{padding:12px 14px}
+.guidance{background:var(--accent2);padding:10px;border-radius:8px;margin:6px 0 10px}.review{background:#f3eee5;padding:10px;border-radius:8px;margin:8px 0}
+.sets{width:100%;border-collapse:collapse;margin:8px 0}.sets th,.sets td{text-align:left;border-bottom:1px solid #ebe8df;padding:7px;font-size:13px}.sets th{color:var(--muted);font-size:11px;text-transform:uppercase}
+.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#eee;font-size:11px;font-weight:800}.badge.done{background:#dcebdd;color:#315d3b}.badge.missing{background:#f3e2dc;color:#87452f}.badge.extra{background:#e8e2f3;color:#5a477d}
+.import-box{border:2px dashed #a9bdb7;background:#f5faf8;padding:16px;border-radius:10px}.preview{border:1px solid var(--rule);padding:12px;border-radius:8px;margin-top:10px;background:white}
+.history-item{padding:12px 0;border-bottom:1px solid var(--rule)}.history-item:last-child{border:0}.big{font-size:22px;font-weight:800}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+pre.output{white-space:pre-wrap;word-break:break-word;background:#202421;color:#e8efe9;padding:14px;border-radius:9px;max-height:420px;overflow:auto;font-size:12px}
+.notice{padding:10px 12px;border-left:4px solid var(--accent);background:#eef5f2;margin:8px 0}.danger{border-left-color:var(--warn);background:#f8eeeb}
+details summary{cursor:pointer;font-weight:800}.alias-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:6px 0;align-items:center}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}.alias-row{grid-template-columns:1fr}.narrow{max-width:none}}
 </style>
 </head>
 <body>
-<div class="container">
+<header><h1>Training Coach · Hevy Ledger</h1><div class="sub">Plan & coaching here · actual sets logged in Hevy · AI makes the programming decisions</div></header>
+<nav class="tabs" id="tabs">
+<button class="active" data-tab="today">Workout</button><button data-tab="history">History</button><button data-tab="bodyweight">Body Weight</button><button data-tab="plan">Baseline Plan</button><button data-tab="ai">AI Coach</button><button data-tab="settings">Settings</button>
+</nav>
+<main class="wrap">
+<section class="pane active" id="pane-today">
+ <div class="card">
+  <h2>Open workout</h2>
+  <p class="hint">Open the exact date/session first. After training, import the full Hevy CSV here; only the workout matching this open session is considered.</p>
+  <div class="row"><div><label>Date</label><input type="date" id="session-date"></div><div><label>Workout</label><select id="session-type"></select></div><div class="narrow"><label>Training week</label><input type="number" id="session-week" min="1" max="24"></div></div>
+  <div class="toolbar"><button class="btn accent" id="open-session">Open / create session</button><button class="btn" id="save-notes">Save notes</button></div>
+ </div>
+ <div id="session-view"></div>
+</section>
 
-  <!-- HEADER -->
-  <header>
-    <div class="masthead">
-      <div class="title-block">
-        <h1>Upper Body · Pull-Up · Ski Ledger</h1>
-        <div class="sub">Upper-body size · Weighted pull-up +30 kg × 5 · 4-month ski conditioning</div>
-      </div>
-      <div class="meta-block">
-        <div>Primary goals: <strong>upper-body hypertrophy</strong> · <strong>+30 kg × 5 pull-up</strong> · <strong>ski-ready in 4 months</strong></div>
-        <div id="header-phase-meta">Phase — / 4</div>
-      </div>
-    </div>
-  </header>
+<section class="pane" id="pane-history">
+ <div class="card"><h2>Workout history</h2><p class="hint">History begins 15 Sep 2026. Completed Hevy data is stored raw at set level.</p><div id="history-list"></div></div>
+</section>
 
-  <!-- TABS -->
-  <nav class="tabs" id="tabs">
-    <button data-tab="today" class="active">Today</button>
-    <button data-tab="bodyweight">Body Weight</button>
-    <button data-tab="history">History</button>
-    <button data-tab="matrix">Matrix</button>
-    <button data-tab="bench">Bench Log</button>
-    <button data-tab="coach">Coach</button>
-    <button data-tab="tools">Tools</button>
-  </nav>
+<section class="pane" id="pane-bodyweight">
+ <div class="card"><h2>Body weight</h2><p class="hint">Workout data comes from Hevy; bodyweight remains manual because it is important context for pull-up performance.</p>
+ <div class="row"><div><label>Date</label><input type="date" id="bw-date"></div><div><label>Weight kg</label><input type="number" step=".1" id="bw-value"></div><div><label>Note</label><input id="bw-note"></div><div><button class="btn accent" id="bw-add" style="margin-top:27px">Add</button></div></div>
+ <div id="bw-list"></div></div>
+</section>
 
-  <!-- ==================== TAB: TODAY ==================== -->
-  <div class="pane active" id="pane-today">
+<section class="pane" id="pane-plan">
+ <div class="card"><h2>Baseline architecture</h2>
+ <div class="notice"><strong>Primary goals:</strong> upper-body hypertrophy; +30 kg × 5 weighted pull-up within 6 months; ski conditioning in 4 months. Three lifting days remain the starting architecture, but the AI coach is free to modify the programme when evidence and your data support doing so.</div>
+ <div id="plan-view"></div></div>
+ <div class="card"><h2>Coaching philosophy</h2><p>Optimise aggressively for sustainable hypertrophy and strength gain. Progress when performance, RPE, technique, recovery and symptoms support it. Do not hold back load or volume merely from excessive caution, but do not trade long-term progress for deteriorating technique, persistent joint/tendon symptoms or clearly unrecovered performance.</p>
+ <p><strong>Nutrition baseline:</strong> maintenance to small surplus; protein ~1.6–2.2 g/kg/day (about 120–165 g/day at 75 kg). Avoid a conventional aggressive bulk because added body mass directly increases the system load of a pull-up.</p></div>
+</section>
 
-    <div id="edit-mode-banner" style="display:none;" class="edit-banner">
-      <strong>Editing saved session:</strong> <span id="edit-mode-label"></span>.
-      Changes auto-save. Tap <em>Save session</em> to confirm or
-      <button class="btn ghost small" id="edit-mode-exit">Exit edit mode</button>
-    </div>
+<section class="pane" id="pane-ai">
+ <div class="card">
+  <h2>AI coaching exchange</h2>
+  <p class="hint">The HTML does not interpret performance. Export sends raw workouts, every set/RPE, notes, programme context and bodyweight to the AI. The AI returns structured JSON containing reviews and future prescriptions.</p>
+  <div class="toolbar"><button class="btn accent" id="ai-export">Download AI export JSON</button><label class="btn" for="ai-import-file">Import AI coach JSON</label><input type="file" id="ai-import-file" accept=".json,application/json" hidden></div>
+  <div id="ai-import-preview"></div>
+ </div>
+ <div class="card"><h2>Data included</h2><div id="ai-data-summary"></div></div>
+ <details class="card"><summary>AI return contract</summary><pre class="output" id="ai-contract"></pre></details>
+</section>
 
-    <!-- Pull-up performance gates -->
-    <section class="card">
-      <h2>Weighted pull-up progression</h2>
-      <p class="hint">Primary performance path: remove assistance → BW ×5 → +10 ×5 → +20 ×5 → +25 ×5 → +30 ×5. Calendar weeks set the emphasis; clean performance determines loading progression.</p>
-      <div class="progress-track">
-        <div class="progress-label">
-          <span id="progress-current-label">Baseline: 12.5 kg assistance × 8</span>
-          <span>Goal: +30 kg × 5</span>
-        </div>
-        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
-        <div class="milestone-row" id="milestone-row"></div>
-      </div>
-    </section>
-
-    <section class="card primary">
-      <h2>Session setup</h2>
-      <div class="row">
-        <div>
-          <label>Date</label>
-          <input type="date" id="session-date">
-        </div>
-        <div>
-          <label>Session type</label>
-          <select id="session-type">
-            <option value="Phase 1 — Foundation">Phase 1 — Grease the Groove</option>
-            <option value="Phase 2 — Day A">Phase 2 — Day A (Volume + Weighted)</option>
-            <option value="Phase 2 — Day B">Phase 2 — Day B (Volume + Weighted)</option>
-            <option value="Phase 2 — Day C">Phase 2 — Day C (Volume + Weighted)</option>
-            <option value="Phase 3 — Day 1">Phase 3 — Day 1 (Ladders + Max)</option>
-            <option value="Phase 3 — Day 2">Phase 3 — Day 2 (Weighted + Volume)</option>
-            <option value="Phase 3 — Day 3">Phase 3 — Day 3 (Density + Hang)</option>
-            <option value="Phase 4 — Day 1">Phase 4 — Day 1 (Max Practice)</option>
-            <option value="Phase 4 — Day 2">Phase 4 — Day 2 (Pyramid)</option>
-            <option value="Phase 4 — Day 3">Phase 4 — Day 3 (Test / Back-off)</option>
-            <option value="Deload">Deload week</option>
-          </select>
-        </div>
-        <div class="narrow">
-          <label>Training week</label>
-          <input type="number" id="session-week" min="1" max="24" value="1">
-        </div>
-      </div>
-
-      <label style="margin-top:12px;">Pre-session context</label>
-      <div class="check-row">
-        <label><input type="checkbox" id="ctx-rested"> Well rested</label>
-        <label><input type="checkbox" id="ctx-poor-sleep"> Poor sleep</label>
-        <label><input type="checkbox" id="ctx-sore"> Arms/shoulders sore</label>
-        <label><input type="checkbox" id="ctx-stressed"> Stressed</label>
-        <label><input type="checkbox" id="ctx-fresh"> Extra fresh (rest day before)</label>
-      </div>
-
-      <div class="row" style="margin-top:8px;">
-        <div>
-          <label>Time of day</label>
-          <select id="ctx-time">
-            <option value="">—</option>
-            <option>Morning</option>
-            <option>Afternoon</option>
-            <option>Evening</option>
-          </select>
-        </div>
-        <div class="narrow">
-          <label>Energy /10</label>
-          <input type="number" id="ctx-energy" min="1" max="10">
-        </div>
-      </div>
-
-      <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--rule-light); display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn accent small" id="load-template-btn">Load session template</button>
-        <button class="btn ghost small" id="clear-exercises-btn">Clear exercises</button>
-      </div>
-    </section>
-
-    <!-- Coach context per session -->
-    <details class="card" id="coach-context-card">
-      <summary>Coach context for this session<span class="summary-meta" id="coach-context-meta"></span></summary>
-      <div class="card-body">
-        <p class="hint">Paste any prescription or notes from your coach review here — what this session is targeting and flags to watch.</p>
-        <label>Prescription summary</label>
-        <textarea id="coach-summary" rows="4" placeholder="e.g. Phase 2 Day A — volume sets at 60% of 8-rep max. Weighted block: start +5 kg, aim for clean 4–6 on all 3 sets."></textarea>
-        <label>Open flags</label>
-        <textarea id="coach-flags" rows="2" placeholder="e.g. Watch for elbow ache on negatives. Keep scapulae retracted at the top."></textarea>
-      </div>
-    </details>
-
-    <!-- Exercise blocks (structured, template-driven) -->
-    <section class="card">
-      <h2>Exercises &amp; sets</h2>
-      <p class="hint">Load a template above to pre-fill exercises for the session type, or add individual sets below. Each exercise block tracks sets independently.</p>
-      <div id="exercises-container"></div>
-      <div style="display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--rule-light);">
-        <button class="btn ghost small" id="add-exercise-btn">+ Add exercise manually</button>
-      </div>
-    </section>
-
-    <!-- Injury check -->
-    <details class="card" id="injury-card">
-      <summary>Injury &amp; pain flags<span class="summary-meta" id="injury-meta"></span></summary>
-      <div class="card-body">
-        <p class="hint">Log any pain signals immediately. Do not train through sharp or persistent pain.</p>
-        <label>Pain flag type (check all that apply)</label>
-        <div class="check-row">
-          <label><input type="checkbox" id="pain-elbow"> Medial elbow (inner)</label>
-          <label><input type="checkbox" id="pain-shoulder"> Shoulder click + pain</label>
-          <label><input type="checkbox" id="pain-wrist"> Wrist during hang</label>
-          <label><input type="checkbox" id="pain-none"> None — all clear</label>
-        </div>
-        <label>Pain notes</label>
-        <textarea id="pain-notes" rows="2" placeholder="e.g. Slight twinge right elbow on set 4 — gone after — monitoring"></textarea>
-      </div>
-    </details>
-
-    <!-- Session remarks -->
-    <details class="card" id="remarks-card">
-      <summary>Session remarks<span class="summary-meta" id="remarks-meta"></span></summary>
-      <div class="card-body">
-        <p class="hint">How it felt overall. Quality of reps, grip, scapular engagement, anything notable.</p>
-        <textarea id="session-remarks" rows="4" placeholder="e.g. GTG felt strong today — reps clean and easy. Thinking I'm close to the 5-rep trigger..."></textarea>
-      </div>
-    </details>
-
-    <div class="toolbar">
-      <button class="btn accent" id="save-session">Save session</button>
-      <button class="btn ghost" id="clear-session">Clear current</button>
-      <button class="btn ghost" id="mark-missed" style="color:var(--warn);border-color:var(--warn);">Mark as missed</button>
-    </div>
-
-  </div>
-
-  <!-- ==================== TAB: BODY WEIGHT ==================== -->
-  <div class="pane" id="pane-bodyweight">
-    <section class="card primary">
-      <h2>Log pull-up checkpoint</h2>
-      <p class="hint">Log a representative strict work set or test set when useful. Enter assistance as a negative load (e.g. −12.5), bodyweight as 0, and added weight as positive. This drives the performance-gate display.</p>
-      <div class="row">
-        <div><label>Date</label><input type="date" id="pullup-date"></div>
-        <div class="narrow"><label>Training week</label><input type="number" id="pullup-week" min="1" max="24"></div>
-        <div class="narrow"><label>Load kg</label><input type="number" id="pullup-load" step="0.5" min="-100" max="100" placeholder="−12.5 / 0 / +10"></div>
-        <div class="narrow"><label>Strict reps</label><input type="number" id="pullup-reps" step="1" min="1" max="30"></div>
-        <div class="narrow"><label>RPE</label><input type="number" id="pullup-rpe" min="1" max="10" step="0.5"></div>
-        <div><button class="btn good" id="pullup-add" style="margin-top:18px;">Log</button></div>
-      </div>
-      <label style="margin-top:8px;">Conditions / note</label>
-      <input type="text" id="pullup-note" placeholder="e.g. strict dead hang, no leg drive, chin clearly over bar">
-    </section>
-    <section class="card">
-      <h2>Pull-up checkpoint log</h2>
-      <div id="pullup-log"></div>
-    </section>
-
-    <section class="card">
-      <h2>Add bodyweight entry</h2>
-      <p class="hint">Log weekly, same conditions each time (morning, fasted). Stable bodyweight = every rep gets no harder. Significant gain = rep count suffers.</p>
-      <div class="row">
-        <div>
-          <label>Date</label>
-          <input type="date" id="bw-date">
-        </div>
-        <div class="narrow">
-          <label>Training week</label>
-          <input type="number" id="bw-week" min="1" max="24">
-        </div>
-        <div class="narrow">
-          <label>Weight (kg)</label>
-          <input type="number" id="bw-kg" step="0.1" min="40" max="200">
-        </div>
-        <div>
-          <button class="btn" id="bw-add" style="margin-top:18px;">Log</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Body weight log</h2>
-      <div id="bw-log"></div>
-    </section>
-  </div>
-
-  <!-- ==================== TAB: HISTORY ==================== -->
-  <div class="pane" id="pane-history">
-    <section class="card">
-      <h2>Training calendar</h2>
-      <div class="cal-nav">
-        <button class="icon-btn" id="cal-prev">‹</button>
-        <span id="cal-month-label"></span>
-        <button class="icon-btn" id="cal-next">›</button>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-      <div style="display:flex; gap:14px; margin-top:10px; flex-wrap:wrap;">
-        <span style="font-size:11px; display:flex; align-items:center; gap:5px;"><span class="cal-dot gtg"></span> GTG / Phase 1</span>
-        <span style="font-size:11px; display:flex; align-items:center; gap:5px;"><span class="cal-dot gym"></span> Gym / Strength</span>
-        <span style="font-size:11px; display:flex; align-items:center; gap:5px;"><span class="cal-dot ladder"></span> Ladders / Endurance</span>
-        <span style="font-size:11px; display:flex; align-items:center; gap:5px;"><span class="cal-dot peak"></span> Peak</span>
-        <span style="font-size:11px; display:flex; align-items:center; gap:5px;"><span class="cal-dot missed"></span> Missed</span>
-      </div>
-    </section>
-    <section class="card">
-      <h2>Saved sessions</h2>
-      <p class="hint">Tap Edit to load a session for review or correction. Sessions from the last 8 weeks are included in coach exports by default.</p>
-      <div id="history-list"></div>
-    </section>
-  </div>
-
-  <!-- ==================== TAB: MATRIX ==================== -->
-  <div class="pane" id="pane-matrix">
-    <section class="card primary">
-      <h2>Baseline programming logic</h2>
-      <p class="hint">This is the default architecture the AI coach should adapt around, not replace casually.</p>
-      <div style="font-size:14px;line-height:1.75;">
-        <strong>Hypertrophy:</strong> most upper-body work uses moderate-to-high weekly volume, stable exercises and double progression at RPE 8–9.<br>
-        <strong>Weighted pull-up:</strong> two exposures/week — a heavier Tuesday session and lower-fatigue Saturday volume — with assistance/load progression determined by strict rep + RPE performance gates.<br>
-        <strong>Skiing:</strong> Thursday develops lower-body force, unilateral control, eccentric hamstrings, isometrics and lateral power; Sunday progresses ski-specific work capacity before a Week 16 taper.<br>
-        <strong>Recovery:</strong> pickleball counts as training load. Recovery cardio is easy RPE 3–4 and may be replaced by pickleball. The split deliberately separates the two upper/pull sessions from the main lower-body ski-strength day to limit overlapping local and systemic fatigue. Review fatigue about every four weeks; deload only when the data supports it.
-      </div>
-    </section>
-    <section class="card">
-      <h2>Phase &amp; milestone matrix</h2>
-      <p class="hint">The calendar defines the training emphasis and review points; pull-up loading progresses through performance gates. Current phase is highlighted.</p>
-      <div id="matrix-container"></div>
-    </section>
-
-    <section class="card">
-      <h2>Why 3 lifting days — not 4</h2>
-      <p class="hint">This is a deliberate allocation decision, not a rule that four days are inferior.</p>
-      <div style="font-size:14px;line-height:1.75;">
-        The plan already supplies two upper-body/pull exposures and enough weekly upper-body work to support hypertrophy while reserving Thursday for ski strength. A fourth lifting day would mainly redistribute volume; it is not required to make the current dose effective. Because you also have Sunday ski conditioning, 2–3 pickleball sessions and easy aerobic work, the marginal benefit of another gym exposure is currently smaller than the value of preserving recovery. If session quality falls because Tuesday/Saturday become too long, or hypertrophy volume later needs to rise beyond what can be performed well in three sessions, a fourth day becomes a reasonable future option.
-      </div>
-    </section>
-    <section class="card">
-      <h2>Nutrition direction</h2>
-      <div style="font-size:14px;line-height:1.75;">
-        <strong>Direction: maintain to a very small surplus, not a conventional bulk or cut.</strong> Upper-body hypertrophy benefits from adequate energy availability, but every kilogram gained also increases the system mass you must move in a pull-up. Start around maintenance and allow only slow gain if training performance and measurements justify it. Aim for roughly <strong>1.6–2.2 g protein/kg/day</strong> (about <strong>120–165 g/day</strong> at 75 kg). Use bodyweight trend, gym performance and appetite/recovery to adjust rather than forcing scale gain.
-      </div>
-    </section>
-    <section class="card">
-      <h2>Two-pass expert review trail</h2>
-      <div style="font-size:13px;line-height:1.75;">
-        <strong>Pass 1 — specialist critique:</strong> hypertrophy review reduced unnecessarily expensive pull-up volume and favored stable accessory work; pull-up review replaced simple weekly load jumps with performance gates and later top-set/back-off work; ski review added explicit eccentric hamstring work, unilateral control, lateral power and a taper instead of endlessly adding circuit rounds.<br><br>
-        <strong>Pass 2 — integration critique:</strong> the panel checked interference and recovery across all goals. The final architecture retained three lifting days, separated upper/pull stress from the main lower-body ski day, counted pickleball as real training load, converted calendar deloads to review points, and made progression performance-driven. Nutrition was also resolved as maintenance-to-small-surplus because aggressive mass gain conflicts with relative pull-up strength.
-      </div>
-    </section>
-    <section class="card">
-      <h2>Evidence basis</h2>
-      <div style="font-size:13px;line-height:1.75;">
-        <strong>Resistance training:</strong> the 2026 ACSM Position Stand synthesizes 137 systematic reviews and supports heavier loading for maximal strength, sufficient weekly volume for hypertrophy, full ROM and prioritising key lifts early in the session. <a href="https://pubmed.ncbi.nlm.nih.gov/41843416/" target="_blank" rel="noopener">PubMed PMID 41843416</a>.<br>
-        <strong>Effort regulation:</strong> hypertrophy generally improves as sets finish closer to failure, while failure itself is not mandatory; RPE is used here as the practical autoregulation language. <a href="https://pubmed.ncbi.nlm.nih.gov/36334240/" target="_blank" rel="noopener">PMID 36334240</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/38970765/" target="_blank" rel="noopener">PMID 38970765</a>.<br>
-        <strong>Concurrent load:</strong> aerobic + resistance training is broadly compatible, but lower-body strength can show some interference depending on modality/dose; this supports keeping recovery cardio easy and counting pickleball/ski work toward lower-body stress. <a href="https://pubmed.ncbi.nlm.nih.gov/37847373/" target="_blank" rel="noopener">PMID 37847373</a>.<br>
-        <strong>Ski preparation:</strong> alpine skiing places substantial eccentric/isometric demands on the legs; recreational skiing can leave eccentric quadriceps/hamstring fatigue for at least 24 h. This supports the eccentric, unilateral, lateral-power and taper elements. <a href="https://pubmed.ncbi.nlm.nih.gov/27900115/" target="_blank" rel="noopener">PMID 27900115</a>; <a href="https://pubmed.ncbi.nlm.nih.gov/30622477/" target="_blank" rel="noopener">PMID 30622477</a>.<br>
-        <strong>Protein:</strong> a large meta-analysis found diminishing additional lean-mass benefit beyond about 1.6 g/kg/day on average, so the 1.6–2.2 g/kg/day range provides a practical buffer. <a href="https://pubmed.ncbi.nlm.nih.gov/28698222/" target="_blank" rel="noopener">PMID 28698222</a>.
-      </div>
-    </section>
-  </div>
-
-  <!-- ==================== TAB: BENCH ==================== -->
-  <div class="pane" id="pane-bench">
-    <section class="card primary">
-      <h2>Bench performance log</h2>
-      <p class="hint">Bench has no independent programme or goal matrix. Tuesday/Saturday session templates are the single source of truth. This tab only tracks representative bench performance as a secondary hypertrophy/strength marker.</p>
-      <div class="bench-stat"><span class="val" id="bench-current-val">—</span><span class="unit">kg estimated 1RM</span><span class="goal-gap" id="bench-gap-label"></span></div>
-      <div class="progress-label"><span id="bench-progress-label">Baseline: 65 kg × 6</span><span>Trend only</span></div>
-    </section>
-    <section class="card">
-      <h2>Log representative bench set</h2>
-      <p class="hint">Prefer a clean work set from the programmed bench/chest-press work. Estimated 1RM uses the Epley formula and is for trend monitoring, not a separate target.</p>
-      <div class="row">
-        <div><label>Date</label><input type="date" id="bench-date"></div>
-        <div class="narrow"><label>Training week</label><input type="number" id="bench-week" min="1" max="24" value="1"></div>
-        <div><label>Weight (kg total)</label><input type="number" id="bench-weight" step="1.25" min="20" max="200" placeholder="e.g. 65"></div>
-        <div class="narrow"><label>Reps</label><input type="number" id="bench-reps" min="1" max="20" placeholder="e.g. 6"></div>
-        <div class="narrow"><label>RPE /10</label><input type="number" id="bench-rpe" min="1" max="10" step="0.5"></div>
-      </div>
-      <label style="margin-top:8px;">Note</label><input type="text" id="bench-note" placeholder="e.g. programmed Tuesday bench; clean pause; final rep slowed">
-      <div style="margin-top:10px;"><button class="btn accent" id="bench-add">Log set</button></div>
-    </section>
-    <section class="card"><h2>Bench trend</h2><div id="bench-log-container"></div></section>
-  </div>
-
-  <!-- ==================== TAB: COACH ==================== -->
-  <div class="pane" id="pane-coach">
-    <section class="card">
-      <h2>AI coach export</h2>
-      <p class="hint">Generates a continuity brief for any AI LLM. It includes the baseline plan, training history, performance gates, RPE guidance and instructions to review progress before suggesting the next week.</p>
-
-      <label>Your ask</label>
-      <textarea id="export-ask" rows="3" placeholder="e.g. Review my last week against the baseline plan, identify fatigue/progression signals, and prescribe next week without changing the architecture unless the data supports it."></textarea>
-
-      <label style="margin-top:12px;">History depth</label>
-      <div class="check-row">
-        <label><input type="radio" name="hist-depth" value="4"> Last 4 weeks</label>
-        <label><input type="radio" name="hist-depth" value="8" checked> Last 8 weeks (recommended)</label>
-        <label><input type="radio" name="hist-depth" value="all"> All sessions</label>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Generate &amp; copy</h2>
-      <div class="toolbar" style="border-top:none; padding-top:0; margin-bottom:12px;">
-        <button class="btn accent" id="generate-md">Generate brief</button>
-        <button class="btn ghost" id="copy-md" disabled>Copy to clipboard</button>
-        <button class="btn ghost" id="download-md" disabled>Download .md</button>
-      </div>
-      <div class="output-area" id="md-output">Click "Generate brief" to build the coaching export.</div>
-    </section>
-  </div>
-
-  <!-- ==================== TAB: TOOLS ==================== -->
-  <div class="pane" id="pane-tools">
-    <nav class="sub-tabs" id="sub-tabs">
-      <button class="sub-tab active" data-sub="profile">Profile</button>
-      <button class="sub-tab" data-sub="datastore">Backup &amp; Data</button>
-    </nav>
-
-    <!-- SUB-PANE: PROFILE -->
-    <div class="sub-pane active" id="sub-pane-profile">
-      <section class="card">
-        <h2>Athlete profile</h2>
-        <p class="hint">These values appear in every coach export.</p>
-        <div class="row">
-          <div class="narrow"><label>Age</label><input type="number" id="prof-age" value="28"></div>
-          <div class="narrow"><label>Bodyweight (kg)</label><input type="number" id="prof-bw" value="75"></div>
-          <div class="narrow"><label>Baseline assisted reps</label><input type="number" id="prof-baseline" value="8" step="1"></div>
-          <div class="narrow"><label>Goal reps @ +30 kg</label><input type="number" id="prof-target" value="5"></div>
-        </div>
-        <div class="row" style="margin-top:8px;">
-          <div>
-            <label>Current phase (1–4)</label>
-            <select id="prof-phase">
-              <option value="1">Phase 1 — Foundation</option>
-              <option value="2">Phase 2 — Build</option>
-              <option value="3">Phase 3 — Ski Peak</option>
-              <option value="4">Phase 4 — Pull-up Peak</option>
-            </select>
-          </div>
-          <div class="narrow">
-            <label>Current training week</label>
-            <input type="number" id="prof-week" value="1" min="1" max="24">
-          </div>
-        </div>
-        <label style="margin-top:8px;">Standing notes (chronic issues, substitutions, grip preference, etc.)</label>
-        <textarea id="prof-notes" rows="4" placeholder="e.g. Mild left shoulder tightness since start. Using neutral grip bar. Training at home — no gym access for weighted pull-ups until Phase 2 milestone."></textarea>
-      </section>
-
-      <section class="card">
-        <h2>RPE guide</h2>
-        <p class="hint">Use the rating for the hardest clean set, not how tired the whole workout felt.</p>
-        <div style="font-size:14px;line-height:1.7;">
-          <strong>RPE 6</strong> ≈ 4 reps left · <strong>RPE 7</strong> ≈ 3 left · <strong>RPE 8</strong> ≈ 2 left · <strong>RPE 9</strong> ≈ 1 left · <strong>RPE 10</strong> = no additional clean rep.
-          <br>Most compounds: RPE 7–9. Isolation hypertrophy: usually RPE 8–9, occasionally 9–9.5. Power/bounds: RPE 6–7 so speed and landing quality stay high.
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Performance-gate checklist</h2>
-        <p class="hint">The calendar tells you when to review; performance determines progression. Mark a gate only after a strict fresh set with full ROM.</p>
-        <div style="font-size:14px; line-height:2;">
-          <label style="text-transform:none; letter-spacing:0; font-weight:normal; font-size:14px; margin:0;"><input type="checkbox" id="trig-p1" style="margin-right:8px;"> <strong>Gate 1:</strong> Bodyweight pull-up ×5 strict — external loading can begin</label>
-          <label style="text-transform:none; letter-spacing:0; font-weight:normal; font-size:14px; margin:0;"><input type="checkbox" id="trig-p2" style="margin-right:8px;"> <strong>Gate 2:</strong> +10 kg ×5 strict — weighted strength base established</label>
-          <label style="text-transform:none; letter-spacing:0; font-weight:normal; font-size:14px; margin:0;"><input type="checkbox" id="trig-p3" style="margin-right:8px;"> <strong>Gate 3:</strong> +20 kg ×5 strict — begin/confirm specialisation</label>
-          <div class="hint" style="margin-top:8px;">Further target gates are tracked by the AI export and session history: <strong>+25 kg ×5</strong> → <strong>+30 kg ×5 goal</strong>.</div>
-        </div>
-      </section>
-    </div>
-
-    <!-- SUB-PANE: DATA & BACKUP -->
-    <div class="sub-pane" id="sub-pane-datastore">
-      <section class="card">
-        <h2>Backup &amp; restore</h2>
-        <p class="hint">Export a JSON backup after every few sessions. Importing wipes existing data.</p>
-        <div class="toolbar" style="border-top:none; padding-top:0; margin-bottom:0;">
-          <button class="btn" id="export-json">Export JSON backup</button>
-          <label for="import-json-file" id="import-json-file-label" class="btn ghost" style="cursor:pointer;display:inline-block;">Import JSON backup</label>
-          <input type="file" id="import-json-file" accept=".json" style="display:none;">
-          <button class="btn danger" id="clear-all">Clear all data</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>About your data</h2>
-        <p style="font-size: 14px; line-height: 1.6;">
-          Everything lives in <strong>this browser only</strong> (localStorage). No server, no account.
-        </p>
-        <ul style="font-size: 13px; color: var(--ink-muted); line-height: 1.7; padding-left: 20px;">
-          <li>Persists across reloads and browser restarts.</li>
-          <li>Tied to this device + browser. Phone and laptop are separate stores.</li>
-          <li>Clearing browser data deletes it. Incognito mode doesn't persist.</li>
-          <li>To move between devices: export JSON → transfer file → import on the other device.</li>
-        </ul>
-        <p id="last-backup-info" class="hint" style="margin-top: 12px;"></p>
-      </section>
-    </div>
-
-  </div>
-
-</div>
-
-<div class="toast" id="toast"></div>
-
+<section class="pane" id="pane-settings">
+ <div class="card"><h2>Hevy exercise aliases</h2><p class="hint">Stable internal exercise IDs preserve continuity even when Hevy names change — e.g. assisted pull-up → bodyweight pull-up → weighted pull-up.</p><div id="alias-list"></div>
+ <div class="toolbar"><button class="btn" id="add-alias">+ Add alias</button></div></div>
+ <div class="card"><h2>Data</h2><div class="toolbar"><button class="btn" id="backup">Download full backup</button><label class="btn" for="restore-file">Restore backup</label><input type="file" id="restore-file" accept=".json" hidden><button class="btn warn" id="reset">Reset to 15 Sep baseline</button></div></div>
+</section>
+</main>
 <script>
-// ============================================================================
-// STORAGE KEY — evidence-reviewed v5
-// Reuses the clean-slate namespace so any workouts logged since the reset are preserved; legacy fields are migrated in loadState().
-// ============================================================================
-const STORAGE_KEY = 'pullupMasteryLedger_v4_clean';
+const STORAGE_KEY='trainingCoachHevy_v4';
+const START_DATE='2026-09-15';
 
-const DEFAULT_STATE = {
-  // User-provided starting baseline. These are reference values, not historical logs.
-  profile: { age: 28, bw: 75, baseline: 8, target: 5, phase: 1, week: 1, notes: 'Primary: upper-body hypertrophy. Pull-up goal: +30 kg × 5 in 6 months. Ski conditioning: dryland peak in 4 months. Pickleball 2–3×/week.' },
-  baselineMetrics: {
-    bodyweightKg: 75,
-    benchKg: 65,
-    benchReps: 6,
-    pullupAssistanceKg: 12.5,
-    pullupReps: 8,
-    pullupAddedLoadKg: -12.5,
-    recordedAs: 'Starting baseline supplied by user; not counted as a completed tracker session.'
-  },
-  triggers: { p1: false, p2: false, p3: false, bw5:false, plus10x5:false, plus20x5:false, plus25x5:false, goal30x5:false },
-  currentSession: null,
-  sessions: [],
-  pullupLog: [],
-  bwLog: [],
-  benchLog: [],
-  lastGeneratedMD: '',
-  lastBackupAt: null
+const BASELINE={
+ athlete:{age:28,bodyweight_kg:75,bench_baseline:{weight_kg:65,reps:6},pullup_baseline:{assistance_kg:12.5,reps:8}},
+ goals:{primary:'Upper-body hypertrophy',pullup:'+30 kg × 5 within 6 months',ski:'Ski-ready in 4 months',pickleball:'2–3 sessions/week'},
+ rpe:{7:'~3 clean reps left',8:'~2 clean reps left',9:'~1 clean rep left',10:'no clean rep left'},
+ nutrition:{direction:'Maintenance to small surplus',protein_g_per_kg:'1.6–2.2',reason:'Support hypertrophy/strength while limiting unnecessary body-mass gain that directly increases pull-up system load.'},
+ philosophy:'Optimise aggressively for sustainable hypertrophy and strength. AI may modify exercises, volume, loading, frequency allocation, RPE targets, progression and ski work when the complete training data supports it.'
 };
 
-// ============================================================================
-// INTEGRATED 24-WEEK PLAN
-// Three lifting days remain Tue/Thu/Sat. Mon/Wed/Fri are incline-walk recovery.
-// Sunday is dryland ski conditioning during the first 16 weeks, then recovery.
-// Existing session/history schema is unchanged: templates only seed NEW sessions.
-// ============================================================================
-const GTG_TEMPLATE = {
-  label: 'Recovery / Ski Conditioning',
-  description: 'Mon/Wed/Fri = recovery aerobic work. Sunday = progressive ski dryland through Week 15; Week 16 taper. Pickleball can replace an aerobic recovery session.',
-  exercises: [
-    { block:'Recovery', name:'Incline treadmill / easy aerobic', prescription:'30–40 min conversational Zone 2, RPE 3–4. If pickleball is played today, it may replace this cardio rather than being added automatically. Keep recovery days restorative.', defaultSets:1, cols:'time' },
-    { block:'Sunday', name:'Ski dryland — phase appropriate', prescription:'W1–4: 3 rounds movement capacity. W5–8: 3–4 rounds capacity. W9–12: 3 × 90–120 s ski-specific intervals with 2–3 min recovery. W13–15: 2–3 high-quality peak intervals. W16: taper, 40–60% less volume. Core menu: lateral step-down 8/side, split-squat iso 30–45 s/side, skater bound 5/side, single-leg balance 30–45 s/side, wall sit 45–90 s. Stop when landing/control quality falls.', defaultSets:5, cols:'reps+time' }
-  ]
+const EXERCISES={
+ pullup_primary:{name:'Pull-Up — Primary',aliases:['Pull Up (Assisted)','Pull Up','Pull Up (Weighted)','Weighted Pull Up','Weighted Pull-Up']},
+ bench:{name:'Bench Press',aliases:['Bench Press (Barbell)','Bench Press']},
+ chest_supported_row:{name:'Chest-Supported Row',aliases:['Chest Supported T Bar Row','Chest Supported Row (Machine)']},
+ incline_db_press:{name:'Incline Dumbbell Press',aliases:['Incline Bench Press (Dumbbell)']},
+ lateral_raise:{name:'Cable Lateral Raise',aliases:['Single Arm Lateral Raise (Cable)','Lateral Raise (Cable)']},
+ curl:{name:'Lengthened-Biased / Preacher Curl',aliases:['Preacher Curl (Machine)','Preacher Curl (Barbell)','Bayesian Curl (Cable)']},
+ triceps_oh:{name:'Overhead Triceps Extension',aliases:['Overhead Triceps Extension (Cable)']},
+ squat:{name:'Hack Squat / Squat',aliases:['Hack Squat (Machine)','Squat (Barbell)','Front Squat (Barbell)']},
+ rfess:{name:'Rear-Foot Elevated Split Squat',aliases:['Bulgarian Split Squat','Bulgarian Split Squat (Dumbbell)']},
+ rdl:{name:'Romanian Deadlift',aliases:['Romanian Deadlift (Barbell)','Romanian Deadlift (Dumbbell)']},
+ nordic:{name:'Nordic Hamstring Curl',aliases:['Nordic Hamstring Curl']},
+ skater:{name:'Skater Bound',aliases:[]},
+ wall_sit:{name:'Wall Sit',aliases:['Wall Sit']},
+ pallof:{name:'Pallof Press / Cable Chop',aliases:['Pallof Press','Woodchop (Cable)']},
+ cable_fly:{name:'Cable Fly',aliases:['Chest Fly (Cable)','Cable Fly Crossovers']},
+ rear_delt:{name:'Rear-Delt Fly',aliases:['Rear Delt Fly (Machine)','Reverse Fly (Cable)']},
+ chest_press:{name:'Machine / Incline Chest Press',aliases:['Chest Press (Machine)','Incline Chest Press (Machine)']},
+ lat_pulldown:{name:'Lat Pulldown',aliases:['Lat Pulldown (Cable)','Lat Pulldown']},
+ cable_row:{name:'Seated Cable Row',aliases:['Seated Cable Row - Bar Grip','Seated Cable Row']},
+ shoulder_press:{name:'Shoulder Press',aliases:['Shoulder Press (Dumbbell)','Shoulder Press (Machine)']}
 };
 
-const GYM_TEMPLATES = {
-  'Phase 2 — Day A': { label:'Foundation — Tue: Pull Strength + Upper A', description:'Primary pull-up strength exposure first, then high-quality upper-body hypertrophy.', exercises:[
-    {block:'A',name:'Assisted / Bodyweight Pull-up — Strength',prescription:'4×3–6 @ RPE 7–8.5, 2.5–4 min rest. Use the least assistance that keeps every rep strict: dead hang, no leg drive, chin clearly over bar. When all 4 sets hit 6 at ≤RPE 8, reduce assistance one step. Once BW ×5 is clean, begin small external loading.',defaultSets:4,cols:'reps+weight'},
-    {block:'B',name:'Bench Press',prescription:'3×6–10 @ RPE 8, 2–3 min rest. Baseline marker: 65 kg ×6. Double progression: add reps until all sets reach 10 at target RPE, then add 2.5 kg total.',defaultSets:3,cols:'reps+weight'},
-    {block:'C',name:'Chest-Supported Row',prescription:'3×6–10 @ RPE 8–9. Stable torso, full controlled stretch and squeeze. Add load only after all sets reach 10 with form intact.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Incline Dumbbell Press',prescription:'3×8–12 @ RPE 8–9. Use a deep comfortable ROM; add reps before load.',defaultSets:3,cols:'reps+weight'},
-    {block:'E',name:'Cable Lateral Raise',prescription:'3×12–20 @ RPE 8–9. Controlled reps; last set may reach RPE 9–9.5 if joints feel good.',defaultSets:3,cols:'reps+weight'},
-    {block:'F',name:'Lengthened-Biased Curl',prescription:'3×8–15 @ RPE 8–9. Preacher curl or behind-body cable curl.',defaultSets:3,cols:'reps+weight'},
-    {block:'G',name:'Overhead Cable Triceps Extension',prescription:'3×8–15 @ RPE 8–9. Add reps before load.',defaultSets:3,cols:'reps+weight'} ]},
-
-  'Phase 2 — Day B': { label:'Foundation — Thu: Ski Strength + Athletic', description:'Lower-body strength, unilateral control, eccentric hamstrings, lateral power and trunk control without excessive bodybuilding fatigue.', exercises:[
-    {block:'A',name:'Hack Squat or Squat',prescription:'3×5–8 @ RPE 7–8. Controlled descent, strong concentric. Build knee-extensor strength without grinding.',defaultSets:3,cols:'reps+weight'},
-    {block:'B',name:'Rear-Foot-Elevated Split Squat',prescription:'3×6–10/side @ RPE 7–8.5. Stable knee tracking and full controlled ROM.',defaultSets:6,cols:'reps+weight'},
-    {block:'C',name:'Romanian Deadlift',prescription:'2–3×6–10 @ RPE 7–8.5. Controlled eccentric; stop before lumbar position changes.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Nordic Hamstring Curl',prescription:'2×4–6 @ RPE 7–8. Introduce conservatively; use assistance as needed and avoid severe soreness.',defaultSets:2,cols:'reps'},
-    {block:'E',name:'Skater Bound',prescription:'3×4–6/side @ RPE 6–7. Quality/power drill, not conditioning. W1–4 stick landing; W5–8 increase distance; W9–15 progress toward quicker rebound while maintaining control.',defaultSets:6,cols:'reps'},
-    {block:'F',name:'Wall Sit',prescription:'2×45–90 s @ RPE 7–8. Maintain skiing posture; terminate before position collapses.',defaultSets:2,cols:'time'},
-    {block:'G',name:'Pallof Press / Cable Chop',prescription:'2–3×8–15/side @ RPE 7–8. Resist unwanted trunk rotation.',defaultSets:4,cols:'reps+weight'},
-    {block:'H',name:'Cable Fly + Rear-Delt Fly (optional)',prescription:'2 supersets ×10–15 / 12–20 @ RPE 8. Skip if session length or recovery is becoming excessive.',defaultSets:2,cols:'reps+weight'} ]},
-
-  'Phase 2 — Day C': { label:'Foundation — Sat: Pull Volume + Upper B', description:'Second pull-up exposure plus the main bodybuilding-style upper-body volume session.', exercises:[
-    {block:'A',name:'Assisted / Bodyweight Pull-up — Volume',prescription:'3×5–8 @ RPE 7–8. Use more assistance / less external load than Tuesday. Full ROM; this is productive volume, not a max test.',defaultSets:3,cols:'reps+weight'},
-    {block:'B',name:'Incline Bench or Machine Chest Press',prescription:'4×8–12 @ RPE 8–9. Double progression.',defaultSets:4,cols:'reps+weight'},
-    {block:'C',name:'Lat Pulldown',prescription:'3×8–12 @ RPE 8–9. Controlled stretch; no torso heaving.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Seated Cable Row',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'E',name:'Machine / DB Shoulder Press',prescription:'3×6–12 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'F',name:'Lateral Raise',prescription:'3×12–20 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'G',name:'Preacher Curl',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'H',name:'Triceps Extension',prescription:'3×8–15 @ RPE 8–9. Prefer overhead cable if comfortable.',defaultSets:3,cols:'reps+weight'} ]},
-
-  'Phase 3 — Day 1': { label:'Build — Tue: Heavy Pull + Upper A', description:'Performance-gated weighted pull-up development while retaining upper-body hypertrophy.', exercises:[
-    {block:'A',name:'Weighted / Assisted Pull-up — Heavy',prescription:'4×3–5 @ RPE 7.5–9. If still assisted, continue reducing assistance. Once BW ×5 is clean, use external load. Hold load until all 4 sets reach 5 with final set ≤RPE 9, then add the smallest practical increment.',defaultSets:4,cols:'reps+weight'},
-    {block:'B',name:'Bench Press',prescription:'3×6–10 @ RPE 8–9. Add reps before load.',defaultSets:3,cols:'reps+weight'},
-    {block:'C',name:'Chest-Supported Row',prescription:'3×6–10 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Incline DB Press',prescription:'3×8–12 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'E',name:'Cable Lateral Raise',prescription:'3×12–20 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'F',name:'Curl',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'G',name:'Overhead Triceps Extension',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'} ]},
-
-  'Phase 3 — Day 2': { label:'Build — Thu: Ski Strength + Power', description:'Progress lower-body force, eccentric capacity and lateral control without compromising recovery.', exercises:[
-    {block:'A',name:'Hack Squat or Squat',prescription:'3×5–8 @ RPE 7.5–8.5.',defaultSets:3,cols:'reps+weight'},
-    {block:'B',name:'Rear-Foot-Elevated Split Squat',prescription:'3×6–10/side @ RPE 8.',defaultSets:6,cols:'reps+weight'},
-    {block:'C',name:'Romanian Deadlift',prescription:'3×6–10 @ RPE 8.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Nordic Hamstring Curl',prescription:'2×4–6 @ RPE 7–8. Progress range/control before adding reps.',defaultSets:2,cols:'reps'},
-    {block:'E',name:'Skater Bound',prescription:'3×5/side @ RPE 6–7. Emphasise distance and stable landing; full recovery.',defaultSets:6,cols:'reps'},
-    {block:'F',name:'Wall Sit',prescription:'2×60–90 s @ RPE 7–8.',defaultSets:2,cols:'time'},
-    {block:'G',name:'Pallof Press / Cable Chop',prescription:'2–3×8–15/side @ RPE 7–8.',defaultSets:4,cols:'reps+weight'} ]},
-
-  'Phase 3 — Day 3': { label:'Build — Sat: Pull Volume + Upper B', description:'Moderate pull-up volume plus high-quality upper-body hypertrophy.', exercises:[
-    {block:'A',name:'Weighted / Bodyweight Pull-up — Volume',prescription:'3×5–7 @ RPE 7–8. Use ~75–85% of Tuesday added load once weighted, or enough assistance to stay submaximal.',defaultSets:3,cols:'reps+weight'},
-    {block:'B',name:'Machine / Incline Press',prescription:'4×8–12 @ RPE 8–9.',defaultSets:4,cols:'reps+weight'},
-    {block:'C',name:'Lat Pulldown',prescription:'3×8–12 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Seated Cable Row',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'E',name:'Shoulder Press',prescription:'3×6–12 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'F',name:'Lateral Raise',prescription:'3×12–20 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'G',name:'Curl + Triceps Extension',prescription:'3 sets each ×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'} ]},
-
-  'Phase 4 — Day 1': { label:'Peak — Tue: Pull-Up Strength + Upper A', description:'W13–16 preserve pull strength while skiing peaks; W17–24 specialise toward +30 kg ×5.', exercises:[
-    {block:'A',name:'Weighted Pull-up — Top Set + Back-offs',prescription:'W13–16: 1 top set ×3–5 @ RPE 8, then 3×3–5 at ~90% of top-set added load @ RPE 7–8. W17–23: top set ×3–5 @ RPE 8–9, then 3 back-offs. Increase top-set load only when target reps are reached without exceeding RPE 9. W24: taper/test rather than normal volume.',defaultSets:4,cols:'reps+weight'},
-    {block:'B',name:'Bench Press',prescription:'3×6–10 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'C',name:'Chest-Supported Row',prescription:'3×6–10 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Incline DB Press',prescription:'3×8–12 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'E',name:'Lateral Raise',prescription:'3×12–20 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'F',name:'Curl',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'G',name:'Overhead Triceps Extension',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'} ]},
-
-  'Phase 4 — Day 2': { label:'Peak — Thu: Ski Peak / Lower Maintenance', description:'W13–15 sharpen ski readiness; W16 taper; W17–24 lower-body maintenance after ski peak.', exercises:[
-    {block:'A',name:'Hack Squat or Squat',prescription:'W13–15: 3×5–6 @ RPE 7–8. W16: 2×5 @ RPE 6–7. W17–24: 2–3×6–8 @ RPE 7–8.',defaultSets:3,cols:'reps+weight'},
-    {block:'B',name:'Rear-Foot-Elevated Split Squat',prescription:'W13–15: 2–3×6–8/side @ RPE 7–8. W16: 1–2 easy sets. W17–24: 2×6–10/side maintenance.',defaultSets:4,cols:'reps+weight'},
-    {block:'C',name:'Romanian Deadlift',prescription:'2×6–8 @ RPE 7–8. Reduce to 1–2 easy sets during Week 16.',defaultSets:2,cols:'reps+weight'},
-    {block:'D',name:'Nordic Hamstring Curl',prescription:'W13–14: 1–2×4–6 @ RPE 7. Remove in W15–16 if soreness risk threatens skiing. W17–24 optional 1–2 sets.',defaultSets:2,cols:'reps'},
-    {block:'E',name:'Skater Bound',prescription:'W13–15: 3×4/side @ RPE 6, crisp/reactive. W16: 2×3/side. W17–24 optional 2–3×4/side.',defaultSets:6,cols:'reps'},
-    {block:'F',name:'Wall Sit',prescription:'W13–15: 2×75–120 s @ RPE 7–8. W16: 1 easy set. W17–24: optional 1–2×60 s.',defaultSets:2,cols:'time'},
-    {block:'G',name:'Pallof Press / Cable Chop',prescription:'2×8–15/side @ RPE 7–8.',defaultSets:4,cols:'reps+weight'} ]},
-
-  'Phase 4 — Day 3': { label:'Peak — Sat: Pull Volume + Upper B', description:'Second specific pull exposure plus enough hypertrophy volume to retain/grow upper-body muscle.', exercises:[
-    {block:'A',name:'Weighted Pull-up — Volume',prescription:'3×5–6 @ RPE 7–8 using ~75–85% of Tuesday added load. W24: replace normal work with the planned +30 kg ×5 test only after taper and appropriate warm-up.',defaultSets:3,cols:'reps+weight'},
-    {block:'B',name:'Incline / Machine Press',prescription:'4×8–12 @ RPE 8–9.',defaultSets:4,cols:'reps+weight'},
-    {block:'C',name:'Lat Pulldown / One-Arm Pulldown',prescription:'3×8–12 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'D',name:'Seated Cable Row',prescription:'3×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'E',name:'Shoulder Press',prescription:'3×6–12 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'F',name:'Lateral Raise',prescription:'3×12–20 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'},
-    {block:'G',name:'Curl + Triceps Extension',prescription:'3 sets each ×8–15 @ RPE 8–9.',defaultSets:3,cols:'reps+weight'} ]},
-
-  'Deload': { label:'Fatigue-Triggered Deload', description:'Use at review points only when performance/recovery flags justify it.', exercises:[
-    {block:'A',name:'Pull-up Technique',prescription:'2 easy sets at ~60–70% normal work, RPE 5–6. Keep movement crisp.',defaultSets:2,cols:'reps+weight'},
-    {block:'B',name:'Upper-body compounds',prescription:'Choose 2 usual compounds; 2 sets each at ~50–60% normal set volume, RPE 6–7.',defaultSets:4,cols:'reps+weight'},
-    {block:'C',name:'Lower-body movement',prescription:'1–2 easy sets of squat or split squat at RPE 6. No Nordics or hard ski intervals.',defaultSets:2,cols:'reps+weight'},
-    {block:'D',name:'Easy aerobic',prescription:'20–30 min conversational pace, RPE 3.',defaultSets:1,cols:'time'} ]}
+const BASE_TEMPLATES={
+ 'Tuesday — Pull Strength + Upper A':[
+  ['pullup_primary','4 × 3–6','RPE 7.5–8.5','Use the minimum assistance / maximum added load that permits strict full-ROM reps. Priority lift: take 2.5–4 min rest.'],
+  ['bench','3 × 6–10','RPE 8','Use double progression. Full controlled ROM.'],
+  ['chest_supported_row','3 × 6–10','RPE 8–9','Stable torso; drive elbows back without turning it into lower-back work.'],
+  ['incline_db_press','3 × 8–12','RPE 8–9','Controlled deep stretch; progress load after owning the top of the rep range.'],
+  ['lateral_raise','3 × 12–20','RPE 8–9','Keep tension on the delt; technique before load.'],
+  ['curl','3 × 8–15','RPE 8–9','Use a stable curl with a strong lengthened position.'],
+  ['triceps_oh','3 × 8–15','RPE 8–9','Long-head biased triceps work; controlled stretch.']
+ ],
+ 'Thursday — Ski Strength + Athletic':[
+  ['squat','3 × 5–8','RPE 8','Controlled eccentric; build strong knee/hip extension without unnecessary failure work.'],
+  ['rfess','3 × 6–10 / leg','RPE 8','Unilateral strength and leg-axis control.'],
+  ['rdl','2–3 × 6–10','RPE 8','Posterior-chain strength with controlled eccentric.'],
+  ['nordic','2 × 4–6','RPE 7–8','Introduce conservatively; avoid excessive soreness.'],
+  ['skater','3 × 4–6 / side','Quality','Stick landings; lateral force and control, not fatigue chasing.'],
+  ['wall_sit','2 × 45–90 sec','RPE 8','Ski-specific isometric quad capacity.'],
+  ['pallof','2–3 × 8–15 / side','RPE 7–8','Trunk anti-rotation / control.'],
+  ['cable_fly','2 × 10–15 optional','RPE 8','Optional upper-body hypertrophy if recovery/session length allows.'],
+  ['rear_delt','2 × 12–20 optional','RPE 8','Optional rear-delt volume.']
+ ],
+ 'Saturday — Pull Volume + Upper B':[
+  ['pullup_primary','3 × 5–8','RPE 8','Second pull exposure; lighter than Tuesday. Build quality volume.'],
+  ['chest_press','4 × 8–12','RPE 8–9','Main hypertrophy press; stable setup and full ROM.'],
+  ['lat_pulldown','3 × 8–12','RPE 8–9','Vertical hypertrophy volume without making every back set a heavy pull-up.'],
+  ['cable_row','3 × 8–15','RPE 8–9','Stable horizontal pull; controlled stretch.'],
+  ['shoulder_press','3 × 6–12','RPE 8','Controlled pressing; avoid grinding.'],
+  ['lateral_raise','3 × 12–20','RPE 8–9','High-quality delt volume.'],
+  ['curl','3 × 8–15','RPE 8–9','Biceps hypertrophy.'],
+  ['triceps_oh','3 × 8–15','RPE 8–9','Triceps hypertrophy.']
+ ],
+ 'Sunday — Ski Conditioning':[
+  ['wall_sit','3 rounds: 45 sec','RPE 7–8','Weeks 1–4 movement capacity; later prescriptions may be changed by AI.'],
+  ['skater','3 rounds: 5 / side','Quality','Controlled lateral landing.'],
+  ['rfess','3 rounds: 30–45 sec iso / side','RPE 7–8','Split-squat isometric capacity.']
+ ],
+ 'Recovery / Pickleball':[]
 };
 
-const PHASE_MATRIX = [
-  { phase:1, weeks:'Weeks 1–6', method:'Foundation: eliminate pull-up assistance, establish 2 weekly pull exposures, build upper-body hypertrophy volume, and develop basic ski strength/control.', trigger:'Performance gate: BW ×5 strict. Assistance should trend downward while technique and recovery remain stable.', deload:'Week 4 = review point; deload only if fatigue flags warrant it.', repTarget:'BW ×5' },
-  { phase:2, weeks:'Weeks 7–12', method:'Build: weighted pull-ups 4×3–5 Tue + submaximal volume Sat; maintain high-quality upper hypertrophy; progress eccentric/unilateral/lateral ski capacity.', trigger:'Performance gates: +10 kg ×5, then progress toward +20 kg ×5 with strict form.', deload:'Weeks 8/12 = review points, not automatic deloads.', repTarget:'+10→+20 ×5' },
-  { phase:3, weeks:'Weeks 13–16', method:'Ski peak: retain pull-up strength and upper-body size while skiing-specific eccentric/isometric/lateral work peaks, then taper.', trigger:'Ski readiness: high-quality intervals and bounds without technique breakdown; lower-body recovery within ~48 h.', deload:'Week 16 ski taper: reduce lower-body volume ~40–60%.', repTarget:'Ski peak' },
-  { phase:4, weeks:'Weeks 17–24', method:'Pull-up specialisation: top-set + back-off Tue, lighter volume Sat, lower-body maintenance, hypertrophy retained.', trigger:'Performance gates: +20 kg ×5 → +25 kg ×5 → goal +30 kg ×5 strict.', deload:'Week 20 review; Week 24 taper/test.', repTarget:'+30 kg ×5' }
+const PHASES=[
+ {weeks:'1–4',name:'Foundation / movement capacity'},
+ {weeks:'5–8',name:'Build / ski capacity'},
+ {weeks:'9–12',name:'Repeated ski effort'},
+ {weeks:'13–15',name:'Ski peak'},
+ {weeks:'16',name:'Ski taper'},
+ {weeks:'17–23',name:'Pull-up specialisation'},
+ {weeks:'24',name:'Pull-up test / review'}
 ];
 
+const SEED_ACTUAL={"title": "Tuesday", "start_time": "15 Sep 2026, 09:18", "end_time": "15 Sep 2026, 10:10", "description": "", "fingerprint": "Tuesday|15 Sep 2026, 09:18", "exercises": [{"hevy_title": "Pull Up (Assisted)", "sets": [{"set_index": 0, "set_type": "normal", "weight_kg": 12.5, "reps": 6, "distance_km": null, "duration_seconds": null, "rpe": 8.0}, {"set_index": 1, "set_type": "normal", "weight_kg": 12.5, "reps": 6, "distance_km": null, "duration_seconds": null, "rpe": 8.5}, {"set_index": 2, "set_type": "normal", "weight_kg": 12.5, "reps": 4, "distance_km": null, "duration_seconds": null, "rpe": 9.0}, {"set_index": 3, "set_type": "normal", "weight_kg": 12.5, "reps": 4, "distance_km": null, "duration_seconds": null, "rpe": 9.5}]}, {"hevy_title": "Chest Supported T Bar Row", "sets": [{"set_index": 0, "set_type": "normal", "weight_kg": 25.0, "reps": 6, "distance_km": null, "duration_seconds": null, "rpe": 8.5}, {"set_index": 1, "set_type": "normal", "weight_kg": 20.0, "reps": 6, "distance_km": null, "duration_seconds": null, "rpe": 9.0}, {"set_index": 2, "set_type": "normal", "weight_kg": 20.0, "reps": 8, "distance_km": null, "duration_seconds": null, "rpe": 8.5}]}, {"hevy_title": "Incline Bench Press (Dumbbell)", "sets": [{"set_index": 0, "set_type": "normal", "weight_kg": 18.0, "reps": 8, "distance_km": null, "duration_seconds": null, "rpe": 8.0}, {"set_index": 1, "set_type": "normal", "weight_kg": 18.0, "reps": 8, "distance_km": null, "duration_seconds": null, "rpe": 8.0}, {"set_index": 2, "set_type": "normal", "weight_kg": 18.0, "reps": 8, "distance_km": null, "duration_seconds": null, "rpe": 9.0}]}, {"hevy_title": "Single Arm Lateral Raise (Cable)", "sets": [{"set_index": 0, "set_type": "normal", "weight_kg": 3.75, "reps": 12, "distance_km": null, "duration_seconds": null, "rpe": 8.5}, {"set_index": 1, "set_type": "normal", "weight_kg": 3.75, "reps": 12, "distance_km": null, "duration_seconds": null, "rpe": 9.0}, {"set_index": 2, "set_type": "normal", "weight_kg": 3.75, "reps": 12, "distance_km": null, "duration_seconds": null, "rpe": 9.0}]}, {"hevy_title": "Preacher Curl (Machine)", "sets": [{"set_index": 0, "set_type": "normal", "weight_kg": 22.5, "reps": 12, "distance_km": null, "duration_seconds": null, "rpe": 7.5}, {"set_index": 1, "set_type": "normal", "weight_kg": 22.5, "reps": 12, "distance_km": null, "duration_seconds": null, "rpe": 8.5}, {"set_index": 2, "set_type": "normal", "weight_kg": 22.5, "reps": 10, "distance_km": null, "duration_seconds": null, "rpe": 9.0}]}, {"hevy_title": "Overhead Triceps Extension (Cable)", "sets": [{"set_index": 0, "set_type": "normal", "weight_kg": 10.0, "reps": 15, "distance_km": null, "duration_seconds": null, "rpe": 8.0}, {"set_index": 1, "set_type": "normal", "weight_kg": 10.0, "reps": 13, "distance_km": null, "duration_seconds": null, "rpe": 9.5}, {"set_index": 2, "set_type": "normal", "weight_kg": 10.0, "reps": 10, "distance_km": null, "duration_seconds": null, "rpe": 9.5}]}]};
 
-// ============================================================================
-// STATE LOAD / SAVE
-// ============================================================================
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return structuredClone(DEFAULT_STATE);
-    const parsed = JSON.parse(raw);
-    const merged = { ...structuredClone(DEFAULT_STATE), ...parsed };
-    merged.profile = { ...structuredClone(DEFAULT_STATE.profile), ...(parsed.profile||{}) };
-    if (merged.profile.week == null && merged.profile.month != null) merged.profile.week = merged.profile.month;
-    delete merged.profile.month;
-    merged.sessions = (merged.sessions||[]).map(x => ({...x, week:x.week ?? x.month ?? 1}));
-    merged.bwLog = (merged.bwLog||[]).map(x => ({...x, week:x.week ?? x.month ?? 1}));
-    merged.pullupLog = merged.pullupLog || [];
-    if (!merged.pullupLog.length && Array.isArray(parsed.repMaxLog)) {
-      merged.pullupLog = parsed.repMaxLog.map(x => ({id:x.id||('pu_'+Date.now()),date:x.date,week:x.week??x.month??1,loadKg:0,reps:x.reps,rpe:null,note:'Migrated legacy bodyweight rep test. '+(x.note||'')}));
-    }
-    return merged;
-  } catch (_) { return structuredClone(DEFAULT_STATE); }
+function defaultState(){
+ const aliases={}; Object.entries(EXERCISES).forEach(([id,e])=>e.aliases.forEach(a=>aliases[a]=id));
+ return {
+  version:4,startDate:START_DATE,baseline:BASELINE,aliases,
+  sessions:[],bodyweight:[],aiUpdates:[],
+  currentSessionId:null
+ };
 }
-
-let state = loadState();
-
-function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  catch (e) { toast('Could not save — storage may be full'); }
+function load(){try{return {...defaultState(),...JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}}catch(e){return defaultState()}}
+let state=load();
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function isoToday(){return new Date().toISOString().slice(0,10)}
+function dateLabel(d){return new Date(d+'T12:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric',weekday:'short'})}
+function uuid(){return (crypto.randomUUID?crypto.randomUUID():'id-'+Date.now()+'-'+Math.random().toString(36).slice(2))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function download(name,obj){const b=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function weekForDate(d){const a=new Date(START_DATE+'T12:00:00'),b=new Date(d+'T12:00:00');return Math.max(1,Math.min(24,Math.floor((b-a)/604800000)+1))}
+function defaultTypeForDate(d){const day=new Date(d+'T12:00:00').getDay();return day===2?'Tuesday — Pull Strength + Upper A':day===4?'Thursday — Ski Strength + Athletic':day===6?'Saturday — Pull Volume + Upper B':day===0?'Sunday — Ski Conditioning':'Recovery / Pickleball'}
+function sessionId(d,type){return d+'::'+type}
+function prescriptionFromTemplate(type){
+ return (BASE_TEMPLATES[type]||[]).map(([id,target,rpe,guidance])=>({exercise_id:id,name:EXERCISES[id]?.name||id,target,rpe,coach_guidance:guidance,user_notes:'',coach_review:'',actual:null}))
 }
-
-function toast(msg, ms = 1800) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), ms);
+function findSession(d,type){return state.sessions.find(s=>s.date===d&&s.type===type)}
+function createSession(d,type){
+ const existing=findSession(d,type); if(existing)return existing;
+ const s={id:sessionId(d,type),date:d,type,week:weekForDate(d),workout_notes:'',coach_review:'',prescription:prescriptionFromTemplate(type),hevy:null,created_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+ state.sessions.push(s);save();return s;
 }
+function current(){return state.sessions.find(s=>s.id===state.currentSessionId)||null}
 
-function todayISO() { return new Date().toISOString().slice(0, 10); }
-function escapeHtml(str) {
-  if (str == null) return '';
-  return String(str).replace(/[&<>"']/g, m =>
-    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+function renderTypeOptions(){
+ const d=document.getElementById('session-date').value||START_DATE;
+ const preferred=defaultTypeForDate(d);
+ document.getElementById('session-type').innerHTML=Object.keys(BASE_TEMPLATES).map(x=>`<option ${x===preferred?'selected':''}>${esc(x)}</option>`).join('');
+ document.getElementById('session-week').value=weekForDate(d);
 }
-function scrollPageToTop() {
-  requestAnimationFrame(() => { window.scrollTo(0,0); });
+function openSession(){
+ const d=document.getElementById('session-date').value, type=document.getElementById('session-type').value;
+ if(!d)return; if(d<START_DATE){alert('This tracker begins on 15 Sep 2026.');return}
+ const s=createSession(d,type); state.currentSessionId=s.id;save();renderSession();
 }
-
-// ============================================================================
-// DAY-OF-WEEK DETECTION
-// 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
-// GTG days: Mon(1), Wed(3), Fri(5), Sun(0)
-// Gym days: Tue(2), Thu(4), Sat(6)
-// ============================================================================
-function isGymDay(dateStr) {
-  const d = dateStr ? new Date(dateStr + 'T12:00:00') : new Date();
-  const dow = d.getDay(); // 0=Sun … 6=Sat
-  return dow === 2 || dow === 4 || dow === 6; // Tue, Thu, Sat
+function formatSet(x,assisted=false){
+ let w=x.weight_kg==null?'—':x.weight_kg+' kg';
+ return `<tr><td>${(x.set_index??0)+1}</td><td>${esc(x.set_type||'normal')}</td><td>${esc(w)}</td><td>${x.reps??'—'}</td><td>${x.rpe??'—'}</td></tr>`;
 }
-
-function getDayLabel(dateStr) {
-  const d = dateStr ? new Date(dateStr + 'T12:00:00') : new Date();
-  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+function actualForExercise(s,ex){
+ if(!s.hevy)return null;
+ const matches=s.hevy.exercises.filter(h=>{
+  const mapped=state.aliases[h.hevy_title]; return mapped===ex.exercise_id;
+ });
+ if(!matches.length)return null;
+ return {hevy_titles:matches.map(m=>m.hevy_title),sets:matches.flatMap(m=>m.sets)};
 }
-
-function getPhaseGymDayKey(phase) {
-  // Legacy template keys are preserved so previously saved session types remain readable.
-  // Phase 1 -> Foundation keys, Phase 2 -> Build keys, Phases 3/4 -> Peak keys.
-  if (phase >= 3) return 'Phase 4 — Day 1';
-  if (phase >= 2) return 'Phase 3 — Day 1';
-  return 'Phase 2 — Day A';
+function renderSession(){
+ const s=current(), box=document.getElementById('session-view');
+ if(!s){box.innerHTML='<div class="card"><p class="muted">Open a dated workout to begin.</p></div>';return}
+ document.getElementById('session-date').value=s.date;document.getElementById('session-type').value=s.type;document.getElementById('session-week').value=s.week;
+ const usedTitles=new Set();
+ let exhtml=s.prescription.map((ex,i)=>{
+  const actual=actualForExercise(s,ex); if(actual)actual.hevy_titles.forEach(x=>usedTitles.add(x));
+  const status=actual?'<span class="badge done">Hevy imported</span>':s.hevy?'<span class="badge missing">No Hevy data</span>':'<span class="badge">Planned</span>';
+  const sets=actual?`<table class="sets"><thead><tr><th>Set</th><th>Type</th><th>Weight</th><th>Reps</th><th>RPE</th></tr></thead><tbody>${actual.sets.map(x=>formatSet(x)).join('')}</tbody></table>`:'';
+  return `<div class="exercise"><div class="ex-head"><div><div class="ex-name">${esc(ex.name)}</div><div class="target">${esc(ex.target)} · ${esc(ex.rpe)}</div></div>${status}</div>
+  <div class="ex-body"><div class="guidance"><strong>Coach Guidance</strong><br>${esc(ex.coach_guidance||'—')}</div>${sets}
+  ${ex.coach_review?`<div class="review"><strong>Coach Review</strong><br>${esc(ex.coach_review)}</div>`:''}
+  <label>Your exercise notes</label><textarea data-ex-note="${i}" rows="2" placeholder="Technique, pain, equipment setup, how it felt…">${esc(ex.user_notes||'')}</textarea></div></div>`;
+ }).join('');
+ let extras='';
+ if(s.hevy){
+  const un=s.hevy.exercises.filter(h=>!usedTitles.has(h.hevy_title));
+  if(un.length) extras=`<div class="card"><h2>Additional Hevy exercises</h2>${un.map(h=>`<div class="exercise"><div class="ex-head"><div class="ex-name">${esc(h.hevy_title)}</div><span class="badge extra">Unmatched / additional</span></div><div class="ex-body"><table class="sets"><thead><tr><th>Set</th><th>Type</th><th>Weight</th><th>Reps</th><th>RPE</th></tr></thead><tbody>${h.sets.map(formatSet).join('')}</tbody></table></div></div>`).join('')}</div>`;
+ }
+ box.innerHTML=`<div class="card"><div class="big">${esc(s.type)}</div><div class="muted">${dateLabel(s.date)} · Week ${s.week}</div>
+ ${s.coach_review?`<div class="review"><strong>Coach Review of this workout</strong><br>${esc(s.coach_review)}</div>`:''}
+ <label>Workout notes</label><textarea id="workout-notes" rows="3" placeholder="Sleep, pickleball yesterday, general fatigue, pain, session context…">${esc(s.workout_notes||'')}</textarea></div>
+ <div class="card"><h2>Exercises</h2><p class="hint">Targets and coaching live here. Actual sets are logged only in Hevy and appear after CSV import.</p>${exhtml}</div>
+ <div class="card"><h2>Import completed workout from Hevy</h2><div class="import-box"><p><strong>Open-session matching:</strong> importer searches the full Hevy export only for <strong>${dateLabel(s.date)}</strong> and prefers the title <strong>${esc(s.type)}</strong>. Older workouts are ignored.</p>
+ <label class="btn accent" for="hevy-file">Choose Hevy CSV</label><input id="hevy-file" type="file" accept=".csv,text/csv" hidden><div id="hevy-preview"></div></div></div>${extras}`;
+ bindSessionFields();
 }
-
-// Build the session type <select> options based on day type
-function rebuildSessionTypeOptions(dateStr) {
-  const sel = document.getElementById('session-type');
-  if (!sel) return;
-  const gym = isGymDay(dateStr);
-  const dayLabel = getDayLabel(dateStr);
-  const phase = state.profile.phase || 1;
-  let options = '';
-  if (!gym) {
-    options = `<option value="GTG">Recovery / Ski Conditioning (${dayLabel})</option>`;
-  } else {
-    const dow = new Date(dateStr + 'T12:00:00').getDay();
-    let keys;
-    if (phase >= 3) keys = ['Phase 4 — Day 1','Phase 4 — Day 2','Phase 4 — Day 3'];
-    else if (phase >= 2) keys = ['Phase 3 — Day 1','Phase 3 — Day 2','Phase 3 — Day 3'];
-    else keys = ['Phase 2 — Day A','Phase 2 — Day B','Phase 2 — Day C'];
-    const preferred = dow===2 ? keys[0] : dow===4 ? keys[1] : keys[2];
-    options = keys.map(k => `<option value="${k}" ${k===preferred?'selected':''}>${GYM_TEMPLATES[k].label}</option>`).join('');
-    options += `<option value="Deload">Deload week</option>`;
+function bindSessionFields(){
+ const s=current(); if(!s)return;
+ document.querySelectorAll('[data-ex-note]').forEach(el=>el.addEventListener('input',()=>{s.prescription[+el.dataset.exNote].user_notes=el.value;s.updated_at=new Date().toISOString();save()}));
+ const wn=document.getElementById('workout-notes');if(wn)wn.addEventListener('input',()=>{s.workout_notes=wn.value;s.updated_at=new Date().toISOString();save()});
+ const hf=document.getElementById('hevy-file');if(hf)hf.addEventListener('change',e=>readHevy(e.target.files[0]));
+}
+function parseCSV(text){
+ const rows=[];let row=[],field='',q=false;
+ for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];
+  if(q){if(c==='"'&&n==='"'){field+='"';i++}else if(c==='"')q=false;else field+=c}
+  else if(c==='"')q=true;else if(c===','){row.push(field);field=''}else if(c==='\n'){row.push(field.replace(/\r$/,''));rows.push(row);row=[];field=''}else field+=c
+ }
+ if(field.length||row.length){row.push(field);rows.push(row)}
+ const headers=rows.shift()||[];return rows.filter(r=>r.some(Boolean)).map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])));
+}
+function parseHevyDate(s){
+ const m=s.match(/^(\d{1,2}) ([A-Za-z]{3}) (\d{4}),/); if(!m)return '';
+ const months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+ return `${m[3]}-${months[m[2]]}-${String(m[1]).padStart(2,'0')}`;
+}
+function groupHevy(rows){
+ const map={};
+ rows.forEach(r=>{const key=r.title+'|'+r.start_time;if(!map[key])map[key]={title:r.title,start_time:r.start_time,end_time:r.end_time,description:r.description,date:parseHevyDate(r.start_time),rows:[]};map[key].rows.push(r)});
+ return Object.values(map);
+}
+let pendingHevy=null;
+function readHevy(file){
+ if(!file)return;const reader=new FileReader();reader.onload=()=>previewHevy(parseCSV(reader.result));reader.readAsText(file);
+}
+function previewHevy(rows){
+ const s=current(), candidates=groupHevy(rows).filter(w=>w.date===s.date);
+ const exact=candidates.find(w=>w.title.trim().toLowerCase()===s.type.trim().toLowerCase());
+ const chosen=exact||(candidates.length===1?candidates[0]:null);
+ const box=document.getElementById('hevy-preview');
+ if(!chosen){
+  box.innerHTML=`<div class="preview"><strong>No unique match found.</strong><br>Workouts on this date: ${candidates.map(x=>esc(x.title)).join(', ')||'none'}. Rename the Hevy workout to match this session or choose the correct date.</div>`;pendingHevy=null;return;
+ }
+ const ex={};chosen.rows.forEach(r=>{if(!ex[r.exercise_title])ex[r.exercise_title]=[];ex[r.exercise_title].push({set_index:r.set_index===''?null:+r.set_index,set_type:r.set_type||'normal',weight_kg:r.weight_kg===''?null:+r.weight_kg,reps:r.reps===''?null:+r.reps,distance_km:r.distance_km===''?null:+r.distance_km,duration_seconds:r.duration_seconds===''?null:+r.duration_seconds,rpe:r.rpe===''?null:+r.rpe})});
+ pendingHevy={title:chosen.title,start_time:chosen.start_time,end_time:chosen.end_time,description:chosen.description,fingerprint:chosen.title+'|'+chosen.start_time,exercises:Object.entries(ex).map(([hevy_title,sets])=>({hevy_title,sets}))};
+ const already=state.sessions.some(x=>x.hevy?.fingerprint===pendingHevy.fingerprint&&x.id!==s.id);
+ box.innerHTML=`<div class="preview"><strong>Matched:</strong> ${esc(chosen.title)} · ${esc(chosen.start_time)}<br>${chosen.rows.length} set rows · ${Object.keys(ex).length} exercises${already?'<div class="notice danger">This Hevy workout is already attached to another session. Import blocked to prevent duplication.</div>':''}<div class="toolbar"><button class="btn accent" id="confirm-hevy" ${already?'disabled':''}>Confirm import into open session</button></div></div>`;
+ if(!already)document.getElementById('confirm-hevy').onclick=confirmHevy;
+}
+function confirmHevy(){
+ const s=current();if(!s||!pendingHevy)return;s.hevy=pendingHevy;s.updated_at=new Date().toISOString();save();pendingHevy=null;renderSession();renderHistory();renderAISummary();
+}
+function saveNotes(){save();alert('Notes saved.')}
+function renderHistory(){
+ const box=document.getElementById('history-list');const list=[...state.sessions].filter(s=>s.date>=START_DATE).sort((a,b)=>b.date.localeCompare(a.date));
+ box.innerHTML=list.length?list.map(s=>`<div class="history-item"><strong>${esc(s.type)}</strong><br><span class="muted">${dateLabel(s.date)} · Week ${s.week} · ${s.hevy?s.hevy.exercises.reduce((n,e)=>n+e.sets.length,0)+' Hevy sets':'planned / no Hevy import'}</span><div class="toolbar"><button class="btn small" data-open="${esc(s.id)}">Open</button></div></div>`).join(''):'<p class="muted">No sessions yet.</p>';
+ box.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{state.currentSessionId=b.dataset.open;save();switchTab('today');renderSession()});
+}
+function renderBW(){
+ const box=document.getElementById('bw-list');box.innerHTML=[...state.bodyweight].sort((a,b)=>b.date.localeCompare(a.date)).map((x,i)=>`<div class="history-item"><strong>${x.weight_kg} kg</strong> · ${dateLabel(x.date)}<br><span class="muted">${esc(x.note||'')}</span></div>`).join('')||'<p class="muted">No bodyweight entries yet.</p>';
+}
+function renderPlan(){
+ document.getElementById('plan-view').innerHTML=`<div class="grid2">${Object.entries(BASE_TEMPLATES).map(([type,arr])=>`<div><h3>${esc(type)}</h3>${arr.length?arr.map(x=>`<p><strong>${esc(EXERCISES[x[0]]?.name||x[0])}</strong><br><span class="target">${esc(x[1])} · ${esc(x[2])}</span><br><span class="muted">${esc(x[3])}</span></p>`).join(''):'<p class="muted">Easy aerobic recovery or pickleball; no lifting prescription.</p>'}</div>`).join('')}</div><hr>${PHASES.map(p=>`<span class="badge">Weeks ${p.weeks}: ${p.name}</span> `).join(' ')}`;
+}
+function exportPayload(){
+ const sessions=state.sessions.filter(s=>s.date>=START_DATE).sort((a,b)=>a.date.localeCompare(b.date));
+ return {
+  schema:'training-coach-ai-exchange',schema_version:1,direction:'tracker_to_ai',generated_at:new Date().toISOString(),
+  instruction:{
+   role:'Act as a science- and evidence-based expert bodybuilding, strength and ski-conditioning coach.',
+   objective:'Optimise the athlete as much as possible for upper-body hypertrophy, +30 kg × 5 weighted pull-up, and ski readiness while managing injury risk intelligently.',
+   authority:'You may change exercises, exercise order, volume, frequency allocation, loads, rep ranges, RPE targets, progression strategy, recovery work and ski conditioning whenever your analysis supports it.',
+   data_policy:'Use the raw set-level Hevy data. Do not assume the HTML has interpreted performance. Preserve useful historical context and athlete notes.',
+   programming_horizon:'Primarily prescribe the next occurrence of each workout with specific targets and Coach Guidance; retain broader architecture only as useful context.',
+   return_format:'Return ONLY valid JSON matching ai_return_contract. No markdown fences.'
+  },
+  baseline:BASELINE,baseline_templates:BASE_TEMPLATES,phase_framework:PHASES,
+  exercise_dictionary:EXERCISES,hevy_aliases:state.aliases,
+  bodyweight:state.bodyweight.filter(x=>x.date>=START_DATE),
+  sessions:sessions,
+  ai_return_contract:{
+   schema:'training-coach-ai-exchange',schema_version:1,direction:'ai_to_tracker',
+   coach_summary:'string optional',
+   session_reviews:[{session_id:'existing session id',review:'permanent coach review',exercise_reviews:[{exercise_id:'stable id',review:'optional'}]}],
+   prescriptions:[{date:'YYYY-MM-DD',type:'workout title',week:'number',workout_guidance:'optional string',exercises:[{exercise_id:'stable id or new id',name:'display name',target:'specific sets/reps/load target',rpe:'target RPE',coach_guidance:'specific guidance'}]}],
+   exercise_dictionary_updates:[{exercise_id:'stable/new id',name:'display name',hevy_aliases:['possible Hevy names']}],
+   notes:'optional string'
   }
-  const current = sel.value;
-  sel.innerHTML = options;
-  if ([...sel.options].some(o => o.value === current)) sel.value = current;
+ };
 }
-
-// ============================================================================
-// BLANK SESSION & EXERCISE HELPERS
-// ============================================================================
-function blankSession() {
-  return {
-    id: 'sess_' + Date.now(),
-    date: todayISO(),
-    week: state.profile.week || 1,
-    type: 'GTG',
-    context: { rested:false, poorSleep:false, sore:false, stressed:false, fresh:false, time:'', energy:null },
-    coachSummary: '',
-    coachFlags: '',
-    exercises: [],
-    pain: { elbow:false, shoulder:false, wrist:false, none:false, notes:'' },
-    remarks: '',
-    savedAt: null
-  };
+function renderAISummary(){
+ const ss=state.sessions.filter(s=>s.date>=START_DATE), sets=ss.reduce((n,s)=>n+(s.hevy?s.hevy.exercises.reduce((m,e)=>m+e.sets.length,0):0),0);
+ document.getElementById('ai-data-summary').innerHTML=`<p><strong>${ss.length}</strong> session record(s) since 15 Sep 2026 · <strong>${sets}</strong> raw Hevy set rows · <strong>${state.bodyweight.length}</strong> bodyweight entries · <strong>${state.aiUpdates.length}</strong> AI update(s) imported.</p><p class="hint">No hard-coded performance summary or progression verdict is generated.</p>`;
+ document.getElementById('ai-contract').textContent=JSON.stringify(exportPayload().ai_return_contract,null,2);
 }
-
-function blankSet() {
-  return { reps:'', weight:'', feel:'', time:'', note:'' };
+function previewAI(obj){
+ const box=document.getElementById('ai-import-preview');
+ if(obj?.schema!=='training-coach-ai-exchange'||obj?.direction!=='ai_to_tracker'){box.innerHTML='<div class="notice danger">Invalid AI coach JSON contract.</div>';return}
+ window.pendingAI=obj;
+ box.innerHTML=`<div class="preview"><strong>AI update ready</strong><br>${(obj.session_reviews||[]).length} session review(s) · ${(obj.prescriptions||[]).length} future prescription(s) · ${(obj.exercise_dictionary_updates||[]).length} exercise dictionary update(s).<div class="toolbar"><button class="btn accent" id="confirm-ai">Apply AI update</button></div></div>`;
+ document.getElementById('confirm-ai').onclick=applyAI;
 }
-
-function makeExercise(t) {
-  return {
-    block: t.block || '',
-    name: t.name || '',
-    prescription: t.prescription || '',
-    cols: t.cols || 'reps',
-    comment: '',
-    sets: Array.from({ length: t.defaultSets || 3 }, () => blankSet())
-  };
+function applyAI(){
+ const o=window.pendingAI;if(!o)return;
+ (o.exercise_dictionary_updates||[]).forEach(u=>{if(!EXERCISES[u.exercise_id])EXERCISES[u.exercise_id]={name:u.name||u.exercise_id,aliases:[]};EXERCISES[u.exercise_id].name=u.name||EXERCISES[u.exercise_id].name;(u.hevy_aliases||[]).forEach(a=>state.aliases[a]=u.exercise_id)});
+ (o.session_reviews||[]).forEach(r=>{const s=state.sessions.find(x=>x.id===r.session_id);if(!s)return;s.coach_review=r.review||s.coach_review;(r.exercise_reviews||[]).forEach(er=>{const ex=s.prescription.find(x=>x.exercise_id===er.exercise_id);if(ex)ex.coach_review=er.review||ex.coach_review})});
+ (o.prescriptions||[]).forEach(p=>{if(!p.date||p.date<START_DATE)return;let s=findSession(p.date,p.type);if(!s){s={id:sessionId(p.date,p.type),date:p.date,type:p.type,week:p.week||weekForDate(p.date),workout_notes:'',coach_review:'',prescription:[],hevy:null,created_at:new Date().toISOString(),updated_at:new Date().toISOString()};state.sessions.push(s)}
+  s.week=p.week||s.week;s.workout_guidance=p.workout_guidance||'';s.prescription=(p.exercises||[]).map(e=>({exercise_id:e.exercise_id,name:e.name||EXERCISES[e.exercise_id]?.name||e.exercise_id,target:e.target||'',rpe:e.rpe||'',coach_guidance:e.coach_guidance||'',user_notes:'',coach_review:''}));s.updated_at=new Date().toISOString();
+ });
+ state.aiUpdates.push({imported_at:new Date().toISOString(),coach_summary:o.coach_summary||'',notes:o.notes||''});save();window.pendingAI=null;renderHistory();renderSession();renderAliases();renderAISummary();document.getElementById('ai-import-preview').innerHTML='<div class="notice">AI update applied.</div>';
 }
-
-// ============================================================================
-// TEMPLATE LOADING
-// ============================================================================
-function getTemplate(type) {
-  if (!type || type === 'GTG') return GTG_TEMPLATE;
-  return GYM_TEMPLATES[type] || null;
+function renderAliases(){
+ const box=document.getElementById('alias-list');const entries=Object.entries(state.aliases).sort((a,b)=>a[0].localeCompare(b[0]));
+ box.innerHTML=entries.map(([alias,id],i)=>`<div class="alias-row"><input value="${esc(alias)}" data-alias-old="${esc(alias)}"><select data-alias-id="${esc(alias)}">${Object.entries(EXERCISES).map(([k,e])=>`<option value="${esc(k)}" ${k===id?'selected':''}>${esc(e.name)} (${esc(k)})</option>`).join('')}</select><button class="btn small warn" data-alias-del="${esc(alias)}">Remove</button></div>`).join('');
+ box.querySelectorAll('[data-alias-id]').forEach(sel=>sel.onchange=()=>{const old=sel.dataset.aliasId;state.aliases[old]=sel.value;save()});
+ box.querySelectorAll('[data-alias-old]').forEach(inp=>inp.onchange=()=>{const old=inp.dataset.aliasOld,val=inp.value.trim();if(!val||val===old)return;const id=state.aliases[old];delete state.aliases[old];state.aliases[val]=id;save();renderAliases()});
+ box.querySelectorAll('[data-alias-del]').forEach(b=>b.onclick=()=>{delete state.aliases[b.dataset.aliasDel];save();renderAliases()});
 }
-
-function loadTemplate(confirmIfData) {
-  if (!state.currentSession) state.currentSession = blankSession();
-  const type = state.currentSession.type || 'GTG';
-  const tpl = getTemplate(type);
-  if (!tpl) { toast('No template for this session type'); return; }
-  if (confirmIfData) {
-    const hasData = (state.currentSession.exercises || []).some(ex =>
-      ex.sets.some(s => s.reps || s.time));
-    if (hasData && !confirm(`Replace current exercises with "${tpl.label}" template?`)) return;
-  }
-  state.currentSession.exercises = tpl.exercises.map(makeExercise);
-  saveState();
-  renderExercises();
-  toast('Loaded: ' + tpl.label);
+function switchTab(name){document.querySelectorAll('.pane').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));document.getElementById('pane-'+name).classList.add('active')}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+document.getElementById('session-date').value=START_DATE;document.getElementById('session-date').onchange=renderTypeOptions;renderTypeOptions();
+document.getElementById('open-session').onclick=openSession;document.getElementById('save-notes').onclick=saveNotes;
+document.getElementById('bw-date').value=START_DATE;document.getElementById('bw-add').onclick=()=>{const d=document.getElementById('bw-date').value,w=+document.getElementById('bw-value').value;if(!d||!w)return;state.bodyweight.push({id:uuid(),date:d,weight_kg:w,note:document.getElementById('bw-note').value});save();renderBW();renderAISummary()};
+document.getElementById('ai-export').onclick=()=>download(`training_coach_export_${isoToday()}.json`,exportPayload());
+document.getElementById('ai-import-file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{previewAI(JSON.parse(r.result))}catch(err){alert('Invalid JSON')}};r.readAsText(f)};
+document.getElementById('backup').onclick=()=>download(`training_tracker_backup_${isoToday()}.json`,state);
+document.getElementById('restore-file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);save();location.reload()}catch(err){alert('Invalid backup')}};r.readAsText(f)};
+document.getElementById('reset').onclick=()=>{if(confirm('Reset all tracker data to the 15 Sep 2026 baseline?')){state=defaultState();seedToday();save();location.reload()}};
+document.getElementById('add-alias').onclick=()=>{const a=prompt('Exact Hevy exercise name');if(!a)return;const id=prompt('Internal exercise ID (e.g. pullup_primary)');if(!id)return;if(!EXERCISES[id])EXERCISES[id]={name:id,aliases:[]};state.aliases[a]=id;save();renderAliases()};
+function seedToday(){
+ if(state.sessions.some(s=>s.date===START_DATE))return;
+ const s=createSession(START_DATE,'Tuesday — Pull Strength + Upper A');
+ // The supplied Hevy export already contains today's completed workout. Seed it as Session 1.
+ if(SEED_ACTUAL?.fingerprint)s.hevy=SEED_ACTUAL;
+ state.currentSessionId=s.id;save();
 }
-
-document.getElementById('load-template-btn').addEventListener('click', () => loadTemplate(true));
-
-document.getElementById('clear-exercises-btn').addEventListener('click', () => {
-  if (!state.currentSession) state.currentSession = blankSession();
-  if (!confirm('Clear all exercises from this session?')) return;
-  state.currentSession.exercises = [];
-  saveState();
-  renderExercises();
-  toast('Exercises cleared');
-});
-
-document.getElementById('add-exercise-btn').addEventListener('click', () => {
-  if (!state.currentSession) state.currentSession = blankSession();
-  const name = prompt('Exercise name:');
-  if (!name || !name.trim()) return;
-  if (!state.currentSession.exercises) state.currentSession.exercises = [];
-  state.currentSession.exercises.push(makeExercise({ name: name.trim(), cols: 'reps', defaultSets: 3 }));
-  saveState();
-  renderExercises();
-});
-
-// ============================================================================
-// EXERCISE RENDERING
-// ============================================================================
-function renderExercises() {
-  const container = document.getElementById('exercises-container');
-  if (!container) return;
-  const exercises = (state.currentSession && state.currentSession.exercises) || [];
-
-  if (!exercises.length) {
-    container.innerHTML = `<div style="padding:12px 0; font-size:13px; color:var(--ink-muted); font-style:italic;">
-      No exercises loaded. Tap <strong>Load session template</strong> above to auto-fill based on today's session type, or add manually.
-    </div>`;
-    return;
-  }
-
-  container.innerHTML = '';
-  exercises.forEach((ex, exIdx) => {
-    const hasData = ex.sets.some(s => s.reps || s.time);
-    const div = document.createElement('div');
-    div.className = 'exercise-block' + (hasData ? ' has-data' : '');
-
-    div.innerHTML = `
-      <div class="ex-header">
-        <div class="ex-name-block">
-          <div class="ex-name">
-            ${ex.block ? `<span class="ex-block-label">Block ${ex.block}</span>` : ''}
-            ${escapeHtml(ex.name)}
-          </div>
-          ${ex.prescription ? `<div class="ex-prescription">${escapeHtml(ex.prescription)}</div>` : ''}
-        </div>
-        <button class="icon-btn" data-del-ex="${exIdx}" title="Remove">×</button>
-      </div>
-      ${buildSetTable(ex, exIdx)}
-      <div style="display:flex;gap:6px;margin-top:6px;">
-        <button class="icon-btn" data-add-set="${exIdx}" title="Add set">+</button>
-        <button class="icon-btn" data-rem-set="${exIdx}" title="Remove last set">−</button>
-      </div>
-      <div style="margin-top:8px;">
-        <label style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-faint);font-weight:700;margin:0 0 3px;">Comment</label>
-        <textarea rows="1" data-ex-comment="${exIdx}" style="min-height:34px;font-size:13px;" placeholder="notes on this exercise...">${escapeHtml(ex.comment||'')}</textarea>
-      </div>`;
-    container.appendChild(div);
-  });
-
-  bindExerciseEvents();
-}
-
-function buildSetTable(ex, exIdx) {
-  const cols = ex.cols || 'reps';
-  let th = '';
-  if (cols === 'gtg')       th = '<th></th><th>Time of day</th><th>Reps</th><th>Notes</th><th>RPE /10</th>';
-  else if (cols === 'time') th = '<th></th><th>Hold time (sec)</th><th>RPE /10</th>';
-  else if (cols === 'ladder') th = '<th></th><th>Round/Rung</th><th>Reps</th><th>RPE /10</th>';
-  else if (cols === 'reps+weight') th = '<th></th><th>Reps</th><th>Load kg (+added / −assist)</th><th>RPE /10</th>';
-  else                      th = '<th></th><th>Reps</th><th>RPE /10</th>';
-
-  const rows = ex.sets.map((s, i) => {
-    let cells = `<td class="set-num">${i+1}</td>`;
-    if (cols === 'gtg') {
-      cells += `<td><input type="text" data-f="time" data-ei="${exIdx}" data-si="${i}" value="${escapeHtml(s.time||'')}" placeholder="9am" style="max-width:60px;"></td>`;
-      cells += `<td><input type="number" min="0" max="60" step="1" data-f="reps" data-ei="${exIdx}" data-si="${i}" value="${s.reps||''}" inputmode="numeric"></td>`;
-      cells += `<td><input type="text" data-f="note" data-ei="${exIdx}" data-si="${i}" value="${escapeHtml(s.note||'')}" placeholder="clean/shaky"></td>`;
-    } else if (cols === 'time') {
-      cells += `<td><input type="number" min="0" max="300" step="1" data-f="time" data-ei="${exIdx}" data-si="${i}" value="${s.time||''}" inputmode="numeric" placeholder="sec"></td>`;
-    } else if (cols === 'ladder') {
-      cells += `<td><input type="text" data-f="note" data-ei="${exIdx}" data-si="${i}" value="${escapeHtml(s.note||'')}" placeholder="e.g. R1-rung3"></td>`;
-      cells += `<td><input type="number" min="0" max="60" step="1" data-f="reps" data-ei="${exIdx}" data-si="${i}" value="${s.reps||''}" inputmode="numeric"></td>`;
-    } else if (cols === 'reps+weight') {
-      cells += `<td><input type="number" min="0" max="60" step="1" data-f="reps" data-ei="${exIdx}" data-si="${i}" value="${s.reps||''}" inputmode="numeric"></td>`;
-      cells += `<td><input type="number" min="-100" max="100" step="2.5" data-f="weight" data-ei="${exIdx}" data-si="${i}" value="${s.weight||''}" inputmode="decimal" placeholder="kg"></td>`;
-    } else {
-      cells += `<td><input type="number" min="0" max="60" step="1" data-f="reps" data-ei="${exIdx}" data-si="${i}" value="${s.reps||''}" inputmode="numeric"></td>`;
-    }
-    cells += `<td><input type="number" min="1" max="10" step="0.5" data-f="feel" data-ei="${exIdx}" data-si="${i}" value="${s.feel||''}" inputmode="numeric"></td>`;
-    return `<tr>${cells}</tr>`;
-  }).join('');
-
-  return `<table class="sets"><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table>`;
-}
-
-function bindExerciseEvents() {
-  const sess = state.currentSession;
-  if (!sess || !sess.exercises) return;
-
-  // All set field inputs via unified data-f attribute
-  document.querySelectorAll('[data-f][data-ei][data-si]').forEach(el => {
-    el.addEventListener('input', () => {
-      const ei = +el.dataset.ei, si = +el.dataset.si, f = el.dataset.f;
-      if (sess.exercises[ei] && sess.exercises[ei].sets[si] !== undefined) {
-        sess.exercises[ei].sets[si][f] = el.value;
-        saveState();
-      }
-    });
-  });
-
-  document.querySelectorAll('[data-ex-comment]').forEach(el => {
-    el.addEventListener('input', () => {
-      const ei = +el.dataset.exComment;
-      if (sess.exercises[ei]) { sess.exercises[ei].comment = el.value; saveState(); }
-    });
-  });
-
-  document.querySelectorAll('[data-add-set]').forEach(el => {
-    el.addEventListener('click', () => {
-      const ei = +el.dataset.addSet;
-      if (sess.exercises[ei]) { sess.exercises[ei].sets.push(blankSet()); saveState(); renderExercises(); }
-    });
-  });
-
-  document.querySelectorAll('[data-rem-set]').forEach(el => {
-    el.addEventListener('click', () => {
-      const ei = +el.dataset.remSet;
-      if (sess.exercises[ei] && sess.exercises[ei].sets.length > 1) {
-        sess.exercises[ei].sets.pop(); saveState(); renderExercises();
-      }
-    });
-  });
-
-  document.querySelectorAll('[data-del-ex]').forEach(el => {
-    el.addEventListener('click', () => {
-      const ei = +el.dataset.delEx;
-      const name = sess.exercises[ei] ? sess.exercises[ei].name : 'this exercise';
-      if (!confirm(`Remove "${name}"?`)) return;
-      sess.exercises.splice(ei, 1); saveState(); renderExercises();
-    });
-  });
-}
-
-// ============================================================================
-// TODAY PANE — TOP FIELDS & HYDRATION
-// ============================================================================
-function bindTopFields() {
-  // Date change → rebuild session type options + auto-load template
-  document.getElementById('session-date').addEventListener('change', e => {
-    if (!state.currentSession) state.currentSession = blankSession();
-    state.currentSession.date = e.target.value;
-    rebuildSessionTypeOptions(e.target.value);
-    // Auto-set type based on day
-    const sel = document.getElementById('session-type');
-    state.currentSession.type = sel.value;
-    saveState();
-  });
-
-  document.getElementById('session-type').addEventListener('change', e => {
-    if (!state.currentSession) state.currentSession = blankSession();
-    state.currentSession.type = e.target.value;
-    saveState();
-  });
-
-  document.getElementById('session-week').addEventListener('input', e => {
-    if (!state.currentSession) state.currentSession = blankSession();
-    state.currentSession.week = +e.target.value || 1;
-    updateHeaderMeta();
-    saveState();
-  });
-
-  ['session-remarks','coach-summary','coach-flags'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const key = { 'session-remarks':'remarks','coach-summary':'coachSummary','coach-flags':'coachFlags' }[id];
-    el.addEventListener('input', () => {
-      if (!state.currentSession) state.currentSession = blankSession();
-      state.currentSession[key] = el.value;
-      saveState();
-      updateCollapsibleSummaries();
-    });
-  });
-
-  ['rested','poorSleep','sore','stressed','fresh'].forEach(k => {
-    const id = 'ctx-' + k.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('change', () => {
-      if (!state.currentSession) state.currentSession = blankSession();
-      state.currentSession.context[k] = el.checked;
-      saveState();
-    });
-  });
-
-  document.getElementById('ctx-time').addEventListener('change', e => {
-    if (!state.currentSession) state.currentSession = blankSession();
-    state.currentSession.context.time = e.target.value;
-    saveState();
-  });
-  document.getElementById('ctx-energy').addEventListener('input', e => {
-    if (!state.currentSession) state.currentSession = blankSession();
-    state.currentSession.context.energy = e.target.value;
-    saveState();
-  });
-
-  ['elbow','shoulder','wrist','none'].forEach(k => {
-    const el = document.getElementById('pain-' + k);
-    if (!el) return;
-    el.addEventListener('change', () => {
-      if (!state.currentSession) state.currentSession = blankSession();
-      if (!state.currentSession.pain) state.currentSession.pain = {};
-      state.currentSession.pain[k] = el.checked;
-      saveState();
-      updateCollapsibleSummaries();
-    });
-  });
-  document.getElementById('pain-notes').addEventListener('input', e => {
-    if (!state.currentSession) state.currentSession = blankSession();
-    if (!state.currentSession.pain) state.currentSession.pain = {};
-    state.currentSession.pain.notes = e.target.value;
-    saveState();
-    updateCollapsibleSummaries();
-  });
-
-  ['coach-context-card','injury-card','remarks-card'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('toggle', () => { el.dataset.userToggled = '1'; });
-  });
-
-  document.getElementById('save-session').addEventListener('click', saveSession);
-  document.getElementById('clear-session').addEventListener('click', () => {
-    if (!confirm('Clear current in-progress session?')) return;
-    state.currentSession = blankSession();
-    saveState();
-    hydrateTodayPane();
-  });
-  document.getElementById('mark-missed').addEventListener('click', () => {
-    if (!state.currentSession) state.currentSession = blankSession();
-    const s = state.currentSession;
-    if (!confirm(`Log Week ${s.week} ${s.type} as missed?`)) return;
-    s._missed = true; s.savedAt = new Date().toISOString();
-    const idx = state.sessions.findIndex(x => x.id === s.id);
-    if (idx >= 0) state.sessions[idx] = JSON.parse(JSON.stringify(s));
-    else state.sessions.push(JSON.parse(JSON.stringify(s)));
-    state.currentSession = blankSession();
-    saveState(); hydrateTodayPane();
-    toast('Missed session logged');
-  });
-  document.getElementById('edit-mode-exit').addEventListener('click', () => {
-    state.currentSession = blankSession();
-    saveState(); hydrateTodayPane();
-    toast('Returned to blank session');
-  });
-}
-
-function hydrateTodayPane() {
-  if (!state.currentSession) state.currentSession = blankSession();
-  const s = state.currentSession;
-
-  ['coach-context-card','injury-card','remarks-card'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { delete el.dataset.userToggled; el.open = false; }
-  });
-
-  const dateVal = s.date || todayISO();
-  document.getElementById('session-date').value = dateVal;
-  document.getElementById('session-week').value = s.week || 1;
-  document.getElementById('session-remarks').value = s.remarks || '';
-  document.getElementById('coach-summary').value = s.coachSummary || '';
-  document.getElementById('coach-flags').value = s.coachFlags || '';
-  document.getElementById('ctx-rested').checked = !!s.context?.rested;
-  document.getElementById('ctx-poor-sleep').checked = !!s.context?.poorSleep;
-  document.getElementById('ctx-sore').checked = !!s.context?.sore;
-  document.getElementById('ctx-stressed').checked = !!s.context?.stressed;
-  document.getElementById('ctx-fresh').checked = !!s.context?.fresh;
-  document.getElementById('ctx-time').value = s.context?.time || '';
-  document.getElementById('ctx-energy').value = s.context?.energy || '';
-  document.getElementById('pain-elbow').checked = !!s.pain?.elbow;
-  document.getElementById('pain-shoulder').checked = !!s.pain?.shoulder;
-  document.getElementById('pain-wrist').checked = !!s.pain?.wrist;
-  document.getElementById('pain-none').checked = !!s.pain?.none;
-  document.getElementById('pain-notes').value = s.pain?.notes || '';
-
-  // Rebuild type options for today's date, then restore saved type
-  rebuildSessionTypeOptions(dateVal);
-  const sel = document.getElementById('session-type');
-  if (s.type && [...sel.options].some(o => o.value === s.type)) {
-    sel.value = s.type;
-  }
-
-  // Auto-load template if no exercises yet
-  if (!s.exercises || !s.exercises.length) {
-    loadTemplate(false);
-  } else {
-    renderExercises();
-  }
-
-  updateHeaderMeta();
-  updateEditBanner();
-  updateCollapsibleSummaries();
-  renderProgressBar();
-}
-
-function updateCollapsibleSummaries() {
-  const s = state.currentSession || {};
-
-  const ccCard = document.getElementById('coach-context-card');
-  const ccMeta = document.getElementById('coach-context-meta');
-  const coachText = (s.coachSummary||'').trim();
-  const flagsText = (s.coachFlags||'').trim();
-  if (ccMeta) {
-    const preview = (coachText || flagsText || '').replace(/\s+/g,' ');
-    ccMeta.textContent = preview ? (preview.length > 60 ? preview.slice(0,60)+'…' : preview) : 'empty — tap to add';
-  }
-  if (ccCard && (coachText || flagsText) && !ccCard.dataset.userToggled) ccCard.open = true;
-
-  const injCard = document.getElementById('injury-card');
-  const injMeta = document.getElementById('injury-meta');
-  const pain = s.pain || {};
-  const flags = ['elbow','shoulder','wrist'].filter(k => pain[k]);
-  if (injMeta) injMeta.textContent = flags.length ? flags.join(', ')+' flagged' : pain.none ? 'all clear' : 'not checked';
-  if (injCard && flags.length && !injCard.dataset.userToggled) injCard.open = true;
-
-  const rMeta = document.getElementById('remarks-meta');
-  const remarksText = (s.remarks||'').trim();
-  if (rMeta) {
-    const preview = remarksText.replace(/\s+/g,' ');
-    rMeta.textContent = preview ? (preview.length > 60 ? preview.slice(0,60)+'…' : preview) : 'empty — tap to add';
-  }
-}
-
-function updateEditBanner() {
-  const banner = document.getElementById('edit-mode-banner');
-  if (!banner) return;
-  const s = state.currentSession;
-  const isEditing = s && s.id && state.sessions.some(x => x.id === s.id);
-  document.getElementById('edit-mode-label').textContent = isEditing
-    ? `Week ${s.week} · ${s.type} · ${s.date}` : '';
-  banner.style.display = isEditing ? 'flex' : 'none';
-}
-
-function updateHeaderMeta() {
-  const phase = state.profile.phase || 1;
-  document.getElementById('header-phase-meta').textContent = `Phase ${phase} / 4`;
-}
-
-function saveSession() {
-  if (!state.currentSession) return;
-  const s = state.currentSession;
-  const hasData = (s.exercises||[]).some(ex => ex.sets.some(set => set.reps||set.time)) || s.remarks || s.coachSummary;
-  if (!hasData && !confirm('No data logged. Save empty session anyway?')) return;
-  s.savedAt = new Date().toISOString();
-  const idx = state.sessions.findIndex(x => x.id === s.id);
-  const wasEditing = idx >= 0;
-  if (wasEditing) state.sessions[idx] = JSON.parse(JSON.stringify(s));
-  else state.sessions.push(JSON.parse(JSON.stringify(s)));
-  state.currentSession = blankSession();
-  saveState(); hydrateTodayPane();
-  toast(wasEditing ? 'Session updated' : 'Session saved ✓');
-}
-
-// ============================================================================
-// PROGRESS BAR
-// ============================================================================
-function renderProgressBar() {
-  const logs = [...(state.pullupLog||[])].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  const gates = [
-    {label:'BW×5', load:0, reps:5}, {label:'+10×5',load:10,reps:5}, {label:'+20×5',load:20,reps:5},
-    {label:'+25×5',load:25,reps:5}, {label:'+30×5',load:30,reps:5}
-  ];
-  const achieved = gates.map(g => logs.some(x => +x.loadKg >= g.load && +x.reps >= g.reps && (+x.rpe||10) <= 10));
-  const count = achieved.filter(Boolean).length;
-  const bar=document.getElementById('progress-bar'), lbl=document.getElementById('progress-current-label'), pips=document.getElementById('milestone-row');
-  if (bar) bar.style.width = (count/gates.length*100)+'%';
-  const latest=logs[0];
-  if (lbl) lbl.textContent = latest ? `Latest: ${+latest.loadKg>0?'+':''}${latest.loadKg} kg × ${latest.reps} @ RPE ${latest.rpe||'—'}` : 'Baseline: −12.5 kg assistance × 8';
-  if (pips) pips.innerHTML = gates.map((g,i)=>`<div class="milestone-pip ${achieved[i]?'reached':''}"><div class="pip"></div><span>${g.label}</span></div>`).join('');
-  state.triggers = {...state.triggers, bw5:achieved[0], plus10x5:achieved[1], plus20x5:achieved[2], plus25x5:achieved[3], goal30x5:achieved[4], p1:achieved[0], p2:achieved[1], p3:achieved[2]};
-}
-
-// ============================================================================
-// BODYWEIGHT & PULL-UP CHECKPOINTS
-// ============================================================================
-function renderPullupLog() {
-  const container = document.getElementById('pullup-log');
-  if (!container) return;
-  if (!(state.pullupLog||[]).length) { container.innerHTML = '<div class="empty-state">No pull-up checkpoints logged yet.</div>'; return; }
-  const sorted=[...state.pullupLog].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  container.innerHTML=sorted.map(e=>`<div class="bw-log-entry">
-    <span class="phase-label">W${e.week||'?'}</span><span class="date">${e.date||''}</span>
-    <span class="reps"><strong>${+e.loadKg>0?'+':''}${e.loadKg} kg × ${e.reps}</strong></span>
-    <span style="font-size:12px;color:var(--ink-muted);">RPE ${e.rpe||'—'}</span>
-    <span style="flex:1;font-size:12px;color:var(--ink-muted);">${escapeHtml(e.note||'')}</span>
-    <button class="icon-btn" data-del-pu="${e.id}">×</button></div>`).join('');
-  container.querySelectorAll('[data-del-pu]').forEach(el=>el.addEventListener('click',()=>{
-    state.pullupLog=state.pullupLog.filter(x=>x.id!==el.dataset.delPu); saveState(); renderPullupLog(); renderProgressBar();
-  }));
-}
-
-document.getElementById('pullup-add').addEventListener('click', () => {
-  const date=document.getElementById('pullup-date').value||todayISO();
-  const week=+document.getElementById('pullup-week').value||state.profile.week||1;
-  const loadKg=parseFloat(document.getElementById('pullup-load').value);
-  const reps=parseInt(document.getElementById('pullup-reps').value);
-  const rpe=parseFloat(document.getElementById('pullup-rpe').value);
-  const note=document.getElementById('pullup-note').value;
-  if (isNaN(loadKg)||!reps||isNaN(reps)) { toast('Enter pull-up load and reps'); return; }
-  state.pullupLog.push({id:'pu_'+Date.now(),date,week,loadKg,reps,rpe:isNaN(rpe)?null:rpe,note});
-  saveState(); ['pullup-load','pullup-reps','pullup-rpe','pullup-note'].forEach(id=>document.getElementById(id).value='');
-  renderPullupLog(); renderProgressBar(); toast('Pull-up checkpoint logged');
-});
-
-function renderBwLog() {
-  const container = document.getElementById('bw-log');
-  if (!container) return;
-  if (!(state.bwLog||[]).length) { container.innerHTML = '<div class="empty-state">No bodyweight entries yet.</div>'; return; }
-  const sorted = [...state.bwLog].sort((a,b) => (b.date||'').localeCompare(a.date||''));
-  container.innerHTML = sorted.map((w,i) => {
-    const prev = sorted[i+1];
-    let delta = '';
-    if (prev && prev.kg) {
-      const d = w.kg - prev.kg;
-      delta = `<span class="delta ${d>0.05?'up':d<-0.05?'down':'flat'}">${d>0?'+':''}${d.toFixed(1)} kg</span>`;
-    }
-    return `<div class="bw-log-entry">
-      <span class="phase-label">W${w.week||'?'}</span>
-      <span class="date">${w.date||''}</span>
-      <span class="kg">${w.kg.toFixed(1)} kg</span>
-      ${delta}
-      <button class="icon-btn" data-del-bw="${w.id}">×</button>
-    </div>`;
-  }).join('');
-  container.querySelectorAll('[data-del-bw]').forEach(el => {
-    el.addEventListener('click', () => {
-      state.bwLog = state.bwLog.filter(x => x.id !== el.dataset.delBw);
-      saveState(); renderBwLog();
-    });
-  });
-}
-
-document.getElementById('bw-add').addEventListener('click', () => {
-  const date = document.getElementById('bw-date').value || todayISO();
-  const week = +document.getElementById('bw-week').value;
-  const kg = parseFloat(document.getElementById('bw-kg').value);
-  if (!kg || isNaN(kg)) { toast('Enter a valid weight'); return; }
-  state.bwLog.push({ id:'bw_'+Date.now(), date, week, kg });
-  saveState();
-  document.getElementById('bw-kg').value = '';
-  renderBwLog();
-  toast('Bodyweight logged');
-});
-
-// ============================================================================
-// BENCH PRESS TRACKING
-// ============================================================================
-function epley(weight, reps) {
-  if (!weight || !reps) return 0;
-  if (+reps === 1) return +weight;
-  return Math.round(+weight * (1 + +reps/30) * 10) / 10;
-}
-
-function renderBenchTab() { renderBenchStatus(); renderBenchLog(); }
-
-function renderBenchStatus() {
-  const sorted=[...(state.benchLog||[])].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  const latest=sorted[0];
-  const e1rm=latest?epley(+latest.weight,+latest.reps):0;
-  const baseline=epley(65,6);
-  const valEl=document.getElementById('bench-current-val'), gapEl=document.getElementById('bench-gap-label'), lblEl=document.getElementById('bench-progress-label');
-  if(valEl) valEl.textContent=e1rm?e1rm+' kg':'—';
-  if(gapEl) gapEl.textContent=e1rm?`${e1rm>=baseline?'+':''}${(e1rm-baseline).toFixed(1)} kg vs baseline e1RM`:'';
-  if(lblEl) lblEl.textContent=e1rm?`Latest ${latest.weight}×${latest.reps} @ RPE ${latest.rpe||'—'} · e1RM ${e1rm} kg`:'Baseline: 65 kg × 6';
-}
-
-function renderBenchLog() {
-  const container = document.getElementById('bench-log-container');
-  if (!container) return;
-  if (!(state.benchLog||[]).length) { container.innerHTML = '<div class="empty-state">No bench sessions logged yet.</div>'; return; }
-  const sorted = [...state.benchLog].sort((a,b) => (b.date||'').localeCompare(a.date||''));
-  container.innerHTML = sorted.map(e => {
-    const e1rm = epley(+e.weight, +e.reps);
-    return `<div class="bw-log-entry" style="flex-wrap:wrap;">
-      <span class="phase-label" style="width:36px;">W${e.week||'?'}</span>
-      <span class="date">${e.date||''}</span>
-      <span style="font-size:11px;color:var(--ink-muted);width:64px;">Programme</span>
-      <span style="font-weight:700;width:100px;">${e.weight} kg × ${e.reps}</span>
-      <span class="reps" style="width:90px;">${e1rm?e1rm+' kg e1RM':''}</span>
-      <span style="font-size:12px;color:var(--ink-muted);flex:1;">trend vs baseline e1RM ${epley(65,6)} kg</span>
-      ${e.rpe?`<span style="font-size:11px;color:var(--ink-faint);">RPE ${e.rpe}</span>`:''}
-      ${e.note?`<span style="font-size:11px;color:var(--ink-faint);font-style:italic;width:100%;">${escapeHtml(e.note)}</span>`:''}
-      <button class="icon-btn" data-del-bench="${e.id}">×</button>
-    </div>`;
-  }).join('');
-  container.querySelectorAll('[data-del-bench]').forEach(el => {
-    el.addEventListener('click', () => {
-      state.benchLog = (state.benchLog||[]).filter(x => x.id !== el.dataset.delBench);
-      saveState(); renderBenchTab();
-    });
-  });
-}
-
-document.getElementById('bench-add').addEventListener('click', () => {
-  const date = document.getElementById('bench-date').value || todayISO();
-  const week = +document.getElementById('bench-week').value || state.profile.week || 1;
-  const weight = parseFloat(document.getElementById('bench-weight').value);
-  const reps = parseInt(document.getElementById('bench-reps').value);
-  const rpe = document.getElementById('bench-rpe').value;
-  const note = document.getElementById('bench-note').value;
-  if (!weight || isNaN(weight) || !reps || isNaN(reps)) { toast('Enter weight and reps'); return; }
-  if (!state.benchLog) state.benchLog = [];
-  state.benchLog.push({ id:'bench_'+Date.now(), date, week, weight, reps, rpe, note });
-  saveState();
-  ['bench-weight','bench-reps','bench-rpe','bench-note'].forEach(id => { document.getElementById(id).value = ''; });
-  renderBenchTab();
-  toast('Bench set logged');
-});
-
-// ============================================================================
-// PHASE MATRIX
-// ============================================================================
-function renderMatrix() {
-  const cp = state.profile.phase || 1;
-  const el = document.getElementById('matrix-container');
-  if (!el) return;
-  el.innerHTML = `
-    <table class="matrix">
-      <thead><tr><th>Phase</th><th>Weeks</th><th>Method</th><th>Rep target</th><th>Phase trigger</th></tr></thead>
-      <tbody>
-        ${PHASE_MATRIX.map(r => `
-          <tr class="${r.phase===cp?'current':''}">
-            <td><strong>${r.phase}</strong></td>
-            <td>${r.weeks}</td>
-            <td style="font-size:12px;">${r.method}</td>
-            <td><strong>${r.repTarget}</strong></td>
-            <td style="font-size:12px;color:var(--ink-muted);">${r.trigger}</td>
-          </tr>
-          <tr class="${r.phase===cp?'current':''}">
-            <td colspan="5" style="font-size:11px;color:var(--ink-faint);padding-top:0;padding-bottom:8px;">Deload: ${r.deload}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>`;
-}
-
-
-// ============================================================================
-// CALENDAR
-// ============================================================================
-const Calendar = (function() {
-  const now = new Date();
-  let calYear = now.getFullYear(), calMonth = now.getMonth(), activeDate = null;
-
-  function dotClass(s) {
-    if (s._missed) return 'missed';
-    const t = (s.type||'').toLowerCase();
-    if (t === 'gtg' || t.includes('gtg')) return 'gtg';
-    if (t.includes('phase 2')) return 'gym';
-    if (t.includes('phase 3')) return 'ladder';
-    if (t.includes('phase 4')) return 'peak';
-    return 'gym';
-  }
-
-  function buildCard(sessions) {
-    const parts = sessions.map(s => {
-      const allSets = (s.exercises||[]).flatMap(ex => ex.sets);
-      const total = allSets.reduce((sum,set) => sum+(parseInt(set.reps)||0), 0);
-      const exNames = (s.exercises||[]).map(ex => ex.name).join(', ');
-      return `<div class="cal-exp-row">
-        <strong>W${s.week} ${escapeHtml(s.type||'')}</strong>
-        ${s._missed ? ' <span class="pill warn">MISSED</span>' : ''}
-        ${total ? `<div style="color:var(--ink-muted);">${total} total reps</div>` : ''}
-        ${exNames ? `<div style="color:var(--ink-faint);font-size:11px;">${escapeHtml(exNames.slice(0,80))}</div>` : ''}
-      </div>`;
-    }).join('');
-    return `<div class="cal-expanded-card">${parts}</div>`;
-  }
-
-  function render() {
-    const lbl = document.getElementById('cal-month-label');
-    const grid = document.getElementById('cal-grid');
-    if (!lbl || !grid) return;
-    const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    lbl.textContent = `${names[calMonth]} ${calYear}`;
-
-    const sessMap = {};
-    (state.sessions||[]).forEach(s => {
-      if (!s.date) return;
-      if (!sessMap[s.date]) sessMap[s.date] = [];
-      sessMap[s.date].push(s);
-    });
-
-    const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let html = dows.map(d => `<div class="cal-dow">${d}</div>`).join('');
-    const firstDay = new Date(calYear, calMonth, 1).getDay();
-    const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-    const daysInPrev = new Date(calYear, calMonth, 0).getDate();
-    const todayStr = todayISO();
-
-    for (let i = 0; i < firstDay; i++)
-      html += `<div class="cal-cell other-month"><span class="cal-num">${daysInPrev-firstDay+1+i}</span></div>`;
-
-    let activeRow = -1;
-    for (let d = 1; d <= daysInMonth; d++) {
-      const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const sessions = sessMap[ds] || [];
-      const hasSess = sessions.length > 0;
-      const cellPos = firstDay + d - 1;
-      let cls = 'cal-cell';
-      if (ds === todayStr) cls += ' today-cell';
-      if (hasSess) cls += ' has-session';
-      if (ds === activeDate) { cls += ' active-cell'; activeRow = Math.floor(cellPos/7); }
-      const dots = hasSess ? `<div class="cal-dot-row">${sessions.map(s=>`<span class="cal-dot ${dotClass(s)}"></span>`).join('')}</div>` : '';
-      html += `<div class="${cls}" data-cal-date="${ds}"><span class="cal-num">${d}</span>${dots}</div>`;
-      const isRowEnd = (cellPos+1)%7===0 || d===daysInMonth;
-      if (isRowEnd && activeRow===Math.floor(cellPos/7) && activeDate && sessMap[activeDate])
-        html += buildCard(sessMap[activeDate]);
-    }
-    const total = firstDay + daysInMonth;
-    const trailing = total%7===0 ? 0 : 7-(total%7);
-    for (let i = 1; i <= trailing; i++)
-      html += `<div class="cal-cell other-month"><span class="cal-num">${i}</span></div>`;
-
-    grid.innerHTML = html;
-    grid.querySelectorAll('.cal-cell.has-session').forEach(cell => {
-      cell.addEventListener('click', () => {
-        activeDate = activeDate===cell.dataset.calDate ? null : cell.dataset.calDate;
-        render();
-      });
-    });
-  }
-
-  document.getElementById('cal-prev').addEventListener('click', () => {
-    calMonth--; if (calMonth<0){calMonth=11;calYear--;} activeDate=null; render();
-  });
-  document.getElementById('cal-next').addEventListener('click', () => {
-    calMonth++; if (calMonth>11){calMonth=0;calYear++;} activeDate=null; render();
-  });
-  return { render };
-})();
-
-// ============================================================================
-// HISTORY
-// ============================================================================
-function renderHistory() {
-  const container = document.getElementById('history-list');
-  if (!container) return;
-  if (!(state.sessions||[]).length) {
-    container.innerHTML = '<div class="empty-state">No sessions saved yet. Log your first session on the Today tab.</div>';
-    return;
-  }
-  const sorted = [...state.sessions].sort((a,b) => (b.date||'').localeCompare(a.date||''));
-  const editingId = state.currentSession?.id;
-  container.innerHTML = sorted.map(s => {
-    const allSets = (s.exercises||[]).flatMap(ex => ex.sets);
-    const totalReps = allSets.reduce((sum,set) => sum+(parseInt(set.reps)||0), 0);
-    const exCount = (s.exercises||[]).length;
-    const isEditing = s.id === editingId;
-    const hasPain = s.pain && (s.pain.elbow||s.pain.shoulder||s.pain.wrist);
-    return `<div class="history-item" style="${isEditing?'border-color:var(--accent);background:#f2f7fb;':''}">
-      <div>
-        <div class="focus">M${s.week||'?'} · ${escapeHtml(s.type||'')}
-          ${s._missed?' <span class="pill warn">MISSED</span>':''}
-          ${isEditing?' <span class="pill accent">editing</span>':''}
-          ${hasPain?' <span class="pill danger">pain flag</span>':''}
-        </div>
-        <div class="date">${s.date||''} · ${s._missed?'skipped':`${exCount} ex · ${totalReps} reps`}</div>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <button class="btn ghost small" data-edit-sess="${s.id}">${isEditing?'Continue':'Edit'}</button>
-        <button class="btn small danger" data-del-sess="${s.id}">Delete</button>
-      </div>
-    </div>`;
-  }).join('');
-
-  container.querySelectorAll('[data-edit-sess]').forEach(el => {
-    el.addEventListener('click', () => {
-      const sess = state.sessions.find(x => x.id===el.dataset.editSess);
-      if (!sess) return;
-      state.currentSession = JSON.parse(JSON.stringify(sess));
-      saveState(); hydrateTodayPane();
-      document.querySelector('nav.tabs button[data-tab="today"]').click();
-      toast(`Editing M${sess.week} ${sess.type}`);
-    });
-  });
-  container.querySelectorAll('[data-del-sess]').forEach(el => {
-    el.addEventListener('click', () => {
-      const sess = state.sessions.find(x => x.id===el.dataset.delSess);
-      if (!sess || !confirm(`Delete M${sess.week} · ${sess.type} · ${sess.date}?\n\nCannot be undone.`)) return;
-      state.sessions = state.sessions.filter(x => x.id!==el.dataset.delSess);
-      if (state.currentSession?.id===el.dataset.delSess) { state.currentSession=blankSession(); hydrateTodayPane(); }
-      saveState(); renderHistory();
-      toast('Session deleted');
-    });
-  });
-}
-
-// ============================================================================
-// COACH EXPORT
-// ============================================================================
-function generateMD() {
-  const ask = document.getElementById('export-ask').value.trim() || '(no specific ask — full review and next session prescription)';
-  const histDepth = document.querySelector('input[name="hist-depth"]:checked')?.value || '8';
-  const sorted = [...(state.sessions||[])].sort((a,b) => (b.date||'').localeCompare(a.date||''));
-  const cutoff = histDepth==='all' ? '0000-00-00' : new Date(Date.now()-+histDepth*7*86400000).toISOString().slice(0,10);
-  const detailed = sorted.filter(s => (s.date||'') >= cutoff);
-  const summarized = sorted.filter(s => (s.date||'') < cutoff);
-  const sortedPullups = [...(state.pullupLog||[])].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  const latestPullup = sortedPullups[0];
-  const latestBW = [...(state.bwLog||[])].sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
-  const p = state.profile;
-
-  let md = `# TRAINING SYSTEM — AI CONTINUITY BRIEF\n`;
-  md += `*Auto-generated ${new Date().toISOString().slice(0,16).replace('T',' ')}*\n\n---\n\n`;
-  md += `## 🎯 1. THE ASK\n\n> ${ask}\n\n---\n\n`;
-  md += `## 👤 2. ATHLETE PROFILE\n\n`;
-  md += `| Field | Value |\n|---|---|\n`;
-  md += `| Age | ${p.age} |\n`;
-  md += `| Bodyweight | ${latestBW ? latestBW.kg.toFixed(1)+' kg (W'+latestBW.week+')' : p.bw+' kg (profile)'} |\n`;
-  md += `| Starting pull-up | 12.5 kg assisted × 8 (baseline) |\n`;
-  md += `| Pull-up goal | +30 kg × 5 strict within 24 weeks |\n`;
-  md += `| Bench marker | 65 kg × 6 at plan start |\n`;
-  md += `| Ski target | Peak dryland readiness by Week 16 |\n`;
-  md += `| Other load | Pickleball 2–3×/week; recovery cardio up to 4 days/week |\n`;
-  
-  md += `| Current phase | Phase ${p.phase} / 4 |\n`;
-  md += `| Current training week | Week ${p.week} / 24 |\n`;
-  md += `| Latest pull-up checkpoint | ${latestPullup ? ((+latestPullup.loadKg>0?'+':'')+latestPullup.loadKg+' kg × '+latestPullup.reps+' @ RPE '+(latestPullup.rpe||'—')+' ('+latestPullup.date+')') : 'No post-baseline checkpoint yet'} |\n\n`;
-  if (p.notes?.trim()) p.notes.trim().split('\n').filter(l=>l.trim()).forEach(l => md += `- ${l.trim()}\n`);
-
-  md += `\n---\n\n## 3. BASELINE ARCHITECTURE\n\n`;
-  md += `| Phase | Weeks | Performance target | Progression gate |\n|---|---|---|---|\n`;
-  PHASE_MATRIX.forEach(r => {
-    md += `| ${r.phase}${r.phase===+p.phase?' ← **current**':''} | ${r.weeks} | ${r.repTarget} | ${r.trigger} |\n`;
-  });
-  md += `\nPerformance gates logged: BW×5 ${state.triggers?.bw5?'✅':'⬜'} · +10×5 ${state.triggers?.plus10x5?'✅':'⬜'} · +20×5 ${state.triggers?.plus20x5?'✅':'⬜'} · +25×5 ${state.triggers?.plus25x5?'✅':'⬜'} · +30×5 ${state.triggers?.goal30x5?'✅':'⬜'}\n\n`;
-  md += `### Weekly baseline\n\n`;
-  md += `- **Mon:** 30–40 min Zone 2 / recovery (pickleball may replace).\n`;
-  md += `- **Tue:** Pull strength + Upper A.\n`;
-  md += `- **Wed:** 30 min Zone 2 / recovery (pickleball may replace).\n`;
-  md += `- **Thu:** Ski strength / athletic lower body.\n`;
-  md += `- **Fri:** 30 min Zone 2 / recovery (pickleball may replace).\n`;
-  md += `- **Sat:** Pull volume + Upper B.\n`;
-  md += `- **Sun:** Ski dryland through W15; W16 taper; later recovery/optional maintenance.\n\n`;
-  md += `### Progression rules\n\n`;
-  md += `- Pull-up strength: keep load/assistance until every prescribed work set reaches the top of its rep range at or below the target RPE; then reduce assistance or add the smallest practical load.\n`;
-  md += `- Hypertrophy lifts: double progression. Reach the top of the rep range across all work sets at target RPE before adding load.\n`;
-  md += `- Review fatigue every ~4 weeks, but deload only when performance/recovery flags justify it. Typical deload: ~40–50% fewer work sets while keeping technique exposures easy.\n`;
-  md += `- Pickleball counts as lower-body/systemic load. Do not automatically stack it on top of recovery cardio.\n`;
-  md += `- RPE anchors: 6≈4 reps left, 7≈3, 8≈2, 9≈1, 10=no additional clean rep.\n\n`;  md += `- Nutrition direction: maintenance to a very small surplus; avoid an aggressive bulk/cut while hypertrophy and relative pull-up strength are both priorities. Protein target ~1.6–2.2 g/kg/day (about 120–165 g/day at 75 kg).\n`;
-  md += `- Why 3 lifting days: two upper/pull exposures plus one ski-strength day already provide sufficient frequency/volume; a 4th day would mainly redistribute volume while competing with Sunday ski work, pickleball 2–3×/week and recovery. Reconsider only if session quality/volume distribution becomes limiting.\n`;
-  md += `- Evidence anchors: ACSM 2026 RT Position Stand (PMID 41843416); proximity-to-failure meta-analysis (PMID 36334240); concurrent-training meta-analysis (PMID 37847373); recreational ski eccentric-fatigue study (PMID 27900115); alpine ski training review (PMID 30622477); protein meta-analysis (PMID 28698222).\n\n`;
-
-  md += `### AI coaching contract\n\n`;
-  md += `Treat this baseline architecture as the default plan. First assess adherence, progression, RPE drift, pain, bodyweight trend, pickleball load and recovery. Suggest the next week by adjusting loads, assistance, reps, or small amounts of volume **within this architecture**. Do not replace exercises or restructure the week unless repeated data, pain/equipment constraints, or a clear plateau supports the change. State exactly why any deviation is recommended. Preserve the three lifting-day limit.\n\n`;
-  const exportKeys = p.phase >= 3 ? ['Phase 4 — Day 1','Phase 4 — Day 2','Phase 4 — Day 3'] : p.phase >= 2 ? ['Phase 3 — Day 1','Phase 3 — Day 2','Phase 3 — Day 3'] : ['Phase 2 — Day A','Phase 2 — Day B','Phase 2 — Day C'];
-  md += `### Current phase — exact gym prescriptions\n\n`;
-  exportKeys.forEach(k => {
-    const t = GYM_TEMPLATES[k];
-    md += `**${t.label}** — ${t.description}\n\n`;
-    t.exercises.forEach(ex => { md += `- **${ex.name}:** ${ex.prescription}\n`; });
-    md += `\n`;
-  });
-  md += `**Recovery / ski-conditioning prescription:** ${GTG_TEMPLATE.exercises.map(ex=>ex.name+': '+ex.prescription).join(' | ')}\n\n`;
-
-  md += `---\n\n## 📍 4. PROGRESS SNAPSHOT\n\n`;
-  if ((state.pullupLog||[]).length) {
-    md += `| Week | Date | Pull-up load | Reps | RPE | Note |
-|---|---|---|---|---|---|
-`;
-    [...state.pullupLog].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).forEach(e => {
-      md += `| W${e.week||'?'} | ${e.date} | ${+e.loadKg>0?'+':''}${e.loadKg} kg | ${e.reps} | ${e.rpe||'—'} | ${escapeHtml(e.note||'')} |
-`;
-    });
-  } else { md += `_No post-baseline pull-up checkpoints logged yet._
-`; }
-
-  md += `\n---\n\n## 📒 5. SESSION HISTORY\n\n`;
-  if (!detailed.length) { md += `_No sessions in this window._\n\n`; }
-  else { detailed.forEach(s => { md += renderSessionMD(s); }); }
-  if (summarized.length) {
-    md += `### Earlier sessions (summary)\n\n`;
-    summarized.forEach(s => {
-      const total = (s.exercises||[]).flatMap(ex=>ex.sets).reduce((n,set)=>n+(parseInt(set.reps)||0),0);
-      md += `- **W${s.week}** ${s.type} (${s.date}): ${total} total reps${s._missed?' · ❌ MISSED':''}\n`;
-    });
-    md += `\n`;
-  }
-
-  if ((state.bwLog||[]).length) {
-    md += `---\n\n## ⚖️ 6. BODYWEIGHT\n\n`;
-    md += `| Week | Date | Weight |\n|---|---|---|\n`;
-    [...state.bwLog].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).forEach(w => {
-      md += `| W${w.week||'?'} | ${w.date} | ${w.kg.toFixed(1)} kg |\n`;
-    });
-    md += `\n`;
-  }
-
-  if ((state.benchLog||[]).length) {
-    const sortedB = [...state.benchLog].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-    const latB = sortedB[sortedB.length-1];
-    const e1rm = epley(+latB.weight, +latB.reps);
-    md += `---\n\n## 🏋️ 7. BENCH PRESS\n\n`;
-    md += `**Bench is a secondary hypertrophy/strength marker only; the session templates are the sole prescription source.** Latest estimated 1RM: ${e1rm} kg.\n\n`;
-    md += `| Week | Date | Weight × Reps | e1RM | RPE | Note |\n|---|---|---|---|---|---|\n`;
-    sortedB.forEach(e => {
-      md += `| W${e.week||'?'} | ${e.date} | Programme | ${e.weight}×${e.reps} | ${epley(+e.weight,+e.reps)} kg | ${e.rpe||'—'} | ${e.note||''} |\n`;
-    });
-    md += `\n`;
-  }
-
-  md += `---\n\n*End of brief.*\n`;
-  return md;
-}
-
-function renderSessionMD(s) {
-  let md = `**${s.type}** · ${s.date}${s._missed?' · ❌ MISSED':''}\n\n`;
-  if (s.coachSummary) md += `> **Prior prescription:** ${s.coachSummary.trim().replace(/\n/g,' ')}\n\n`;
-  if (s.coachFlags)   md += `> **Flags:** ${s.coachFlags.trim().replace(/\n/g,' ')}\n\n`;
-  const ctx = s.context||{};
-  const ctxBits = [ctx.time,ctx.energy?`Energy ${ctx.energy}/10`:null,ctx.rested?'well rested':null,
-    ctx.poorSleep?'poor sleep':null,ctx.sore?'arms/shoulders sore':null,ctx.stressed?'stressed':null,
-    ctx.fresh?'extra fresh':null].filter(Boolean);
-  if (ctxBits.length) md += `_Pre-session: ${ctxBits.join(' · ')}_\n\n`;
-  if (s._missed) return md + `---\n\n`;
-
-  (s.exercises||[]).forEach(ex => {
-    md += `**${ex.block?`[${ex.block}] `:''}${ex.name}**\n\n`;
-    const cols = ex.cols||'reps';
-    if (cols==='gtg') {
-      md += `| # | Time | Reps | Notes | RPE |\n|---|---|---|---|---|\n`;
-      ex.sets.forEach((s,i) => md += `| ${i+1} | ${s.time||'—'} | ${s.reps||'—'} | ${s.note||'—'} | ${s.feel||'—'} |\n`);
-    } else if (cols==='time') {
-      md += `| # | Seconds | RPE |\n|---|---|---|\n`;
-      ex.sets.forEach((s,i) => md += `| ${i+1} | ${s.time||'—'} | ${s.feel||'—'} |\n`);
-    } else if (cols==='reps+weight') {
-      md += `| # | Reps | Load kg (+added / −assist) | RPE |\n|---|---|---|---|\n`;
-      ex.sets.forEach((s,i) => md += `| ${i+1} | ${s.reps||'—'} | ${s.weight||'—'} | ${s.feel||'—'} |\n`);
-    } else if (cols==='ladder') {
-      md += `| Round | Reps | RPE |\n|---|---|---|\n`;
-      ex.sets.forEach((s,i) => md += `| ${s.note||i+1} | ${s.reps||'—'} | ${s.feel||'—'} |\n`);
-    } else {
-      md += `| # | Reps | RPE |\n|---|---|---|\n`;
-      ex.sets.forEach((s,i) => md += `| ${i+1} | ${s.reps||'—'} | ${s.feel||'—'} |\n`);
-    }
-    const total = ex.sets.reduce((n,set)=>n+(parseInt(set.reps)||0),0);
-    if (total) md += `_Total: ${total} reps_\n`;
-    if (ex.comment) md += `_Comment: ${ex.comment}_\n`;
-    md += `\n`;
-  });
-
-  const pain = s.pain||{};
-  const pf = ['elbow','shoulder','wrist'].filter(k=>pain[k]);
-  if (pf.length) md += `> ⚠️ **Pain flags:** ${pf.join(', ')}${pain.notes?' — '+pain.notes:''}\n\n`;
-  if (s.remarks) md += `> **Remarks:** ${s.remarks.replace(/\n/g,' ')}\n\n`;
-  return md + `---\n\n`;
-}
-
-document.getElementById('generate-md').addEventListener('click', () => {
-  const md = generateMD();
-  state.lastGeneratedMD = md;
-  saveState();
-  document.getElementById('md-output').textContent = md;
-  document.getElementById('copy-md').disabled = false;
-  document.getElementById('download-md').disabled = false;
-});
-
-document.getElementById('copy-md').addEventListener('click', async () => {
-  if (!state.lastGeneratedMD) return;
-  try { await navigator.clipboard.writeText(state.lastGeneratedMD); toast('Copied ✓'); }
-  catch (_) {
-    const r = document.createRange();
-    r.selectNode(document.getElementById('md-output'));
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(r);
-    document.execCommand('copy');
-    window.getSelection().removeAllRanges();
-    toast('Copied (fallback)');
-  }
-});
-
-document.getElementById('download-md').addEventListener('click', () => {
-  if (!state.lastGeneratedMD) return;
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([state.lastGeneratedMD], {type:'text/markdown'})),
-    download: `pullup_brief_${todayISO()}.md`
-  });
-  a.click(); URL.revokeObjectURL(a.href);
-});
-
-// ============================================================================
-// PROFILE & TOOLS
-// ============================================================================
-function bindProfileFields() {
-  [['prof-age','age'],['prof-bw','bw'],['prof-baseline','baseline'],
-   ['prof-target','target'],['prof-week','week']].forEach(([id,key]) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('input', () => { state.profile[key]=parseFloat(el.value)||0; saveState(); updateHeaderMeta(); });
-  });
-  const phEl = document.getElementById('prof-phase');
-  if (phEl) phEl.addEventListener('change', () => { state.profile.phase=parseInt(phEl.value); saveState(); updateHeaderMeta(); });
-  const ntEl = document.getElementById('prof-notes');
-  if (ntEl) ntEl.addEventListener('input', () => { state.profile.notes=ntEl.value; saveState(); });
-
-  ['p1','p2','p3'].forEach(k => {
-    const el = document.getElementById('trig-'+k);
-    if (el) el.addEventListener('change', () => { state.triggers[k]=el.checked; saveState(); });
-  });
-}
-
-document.getElementById('export-json').addEventListener('click', () => {
-  state.lastBackupAt = new Date().toISOString(); saveState();
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([JSON.stringify(state,null,2)], {type:'application/json'})),
-    download: `pullup_backup_${todayISO()}.json`
-  });
-  a.click(); URL.revokeObjectURL(a.href);
-  toast('Backup downloaded'); updateLastBackupInfo();
-});
-
-document.getElementById('import-json-file').addEventListener('change', e => {
-  const f = e.target.files[0]; if (!f) return;
-  if (!confirm('Importing will REPLACE all current data. Continue?')) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      state = { ...structuredClone(DEFAULT_STATE), ...JSON.parse(reader.result) };
-      saveState(); hydrateAll(); toast('Imported');
-    } catch (_) { toast('Import failed: invalid JSON'); }
-  };
-  reader.readAsText(f);
-});
-
-document.getElementById('clear-all').addEventListener('click', () => {
-  if (!confirm('Clear all tracked sessions and logs? The starting baseline and programme will remain.')) return;
-  if (!confirm('Really sure? Tracked history cannot be recovered unless you exported a backup.')) return;
-  state = structuredClone(DEFAULT_STATE); saveState(); hydrateAll(); toast('Tracked data cleared; baseline retained');
-});
-
-function updateLastBackupInfo() {
-  const el = document.getElementById('last-backup-info');
-  if (!el) return;
-  if (!state.lastBackupAt) { el.innerHTML = '<span style="color:var(--danger);">⚠️ No backup taken yet.</span>'; return; }
-  const last = new Date(state.lastBackupAt);
-  const days = Math.floor((Date.now()-last.getTime())/86400000);
-  const warn = days>=21 ? `<span style="color:var(--danger);">— ${days} days old, export now.</span>` :
-               days>=7  ? `<span style="color:var(--warn);">— consider a fresh backup.</span>` : '';
-  el.innerHTML = `Last backup: <strong>${last.toISOString().slice(0,10)}</strong> (${days} day${days!==1?'s':''} ago) ${warn}`;
-}
-
-// ============================================================================
-// TAB WIRING
-// ============================================================================
-document.querySelectorAll('nav.tabs button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('pane-'+btn.dataset.tab).classList.add('active');
-    if (btn.dataset.tab==='history')    { renderHistory(); Calendar.render(); }
-    if (btn.dataset.tab==='bodyweight') { renderPullupLog(); renderBwLog(); }
-    if (btn.dataset.tab==='matrix')     { renderMatrix();  }
-    if (btn.dataset.tab==='bench')      { renderBenchTab(); }
-    if (btn.dataset.tab==='tools')      { updateLastBackupInfo(); }
-    if (btn.dataset.tab==='coach') {
-      const md = state.lastGeneratedMD||'';
-      document.getElementById('md-output').textContent = md||'Click "Generate brief" to build the coaching export.';
-      document.getElementById('copy-md').disabled = !md;
-      document.getElementById('download-md').disabled = !md;
-    }
-    scrollPageToTop();
-  });
-});
-
-document.querySelectorAll('.sub-tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('sub-pane-'+btn.dataset.sub).classList.add('active');
-    if (btn.dataset.sub==='datastore') updateLastBackupInfo();
-    scrollPageToTop();
-  });
-});
-
-// ============================================================================
-// INITIAL HYDRATION
-// ============================================================================
-function hydrateAll() {
-  hydrateTodayPane();
-  const p = state.profile;
-  document.getElementById('prof-age').value = p.age||25;
-  document.getElementById('prof-bw').value = p.bw||75;
-  document.getElementById('prof-baseline').value = p.baseline||2.5;
-  document.getElementById('prof-target').value = p.target||22;
-  document.getElementById('prof-week').value = p.week||1;
-  document.getElementById('prof-phase').value = p.phase||1;
-  document.getElementById('prof-notes').value = p.notes||'';
-  document.getElementById('trig-p1').checked = !!state.triggers?.p1;
-  document.getElementById('trig-p2').checked = !!state.triggers?.p2;
-  document.getElementById('trig-p3').checked = !!state.triggers?.p3;
-  document.getElementById('pullup-date').value = todayISO();
-  document.getElementById('pullup-week').value = p.week||1;
-  document.getElementById('bw-date').value = todayISO();
-  document.getElementById('bw-week').value = p.week||1;
-  document.getElementById('bench-date').value = todayISO();
-  document.getElementById('bench-week').value = p.week||1;
-  const md = state.lastGeneratedMD||'';
-  document.getElementById('md-output').textContent = md||'Click "Generate brief" to build the coaching export.';
-  document.getElementById('copy-md').disabled = !md;
-  document.getElementById('download-md').disabled = !md;
-}
-
-bindTopFields();
-bindProfileFields();
-hydrateAll();
+seedToday();renderSession();renderHistory();renderBW();renderPlan();renderAliases();renderAISummary();
 </script>
-</body>
-</html>
+</body></html>
